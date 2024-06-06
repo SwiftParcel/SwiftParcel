@@ -39,10 +39,17 @@ async function checkEmailData(Email) {
   console.log('checkEmailData...' + Email);
   return await checkEmailExists(Email);
 }
+async function loginData(Email,Password) {
+  console.log('loginData...' + Email,Password);
+  return await getDBloginData(Email,Password);
+}
+
 const resolvers = {
   Query: {
     userList: getUser,
     detailsList: (parent, { id }) => detailsData(id),
+login: (_, { Email,Password }) => loginData(Email,Password),
+
     checkEmail: (_, { Email }) => checkEmailData(Email),
     
   },

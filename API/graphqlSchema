@@ -20,6 +20,8 @@ input UserInputs {
 type Query {
   userList: [User!]!
   detailsList(id: Int): [User!]!
+login(Email: String!, Password: String!): [User!]!
+  
   checkEmail(Email: String!): [User!]!
 }
 

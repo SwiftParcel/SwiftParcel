@@ -1,0 +1,45 @@
+{
+  "name": "week1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "uiserver.js",
+  "scripts": {
+    "start": "nodemon uiserver.js",
+    "#compile": "babel JSX --presets @babel/react --out-dir public",
+    "compile": "webpack --mode development",
+    "#watch": "babel JSX --presets @babel/react --out-dir public --watch --verbose",
+    "watch": "webpack --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.0",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-dom": "^18.2.0",
+    "react-icons": "^5.2.1",
+    "react-navigation": "^5.0.0",
+    "react-router-dom": "^6.23.1",
+    "style-loader": "^4.0.0",
+    "whatwg-fetch": "^3.6.20"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/preset-react": "^7.23.3",
+    "babel-loader": "^9.1.3",
+    "css-loader": "^7.1.1",
+    "file-loader": "^6.2.0",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-middleware": "^7.0.0",
+    "webpack-hot-middleware": "^2.26.1"
+  }
+}
