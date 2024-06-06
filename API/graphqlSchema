@@ -1,0 +1,28 @@
+scalar GraphQLDate
+
+type User {
+  id: Int!
+  Name: String!
+  Email: String!
+  Password: String!
+  UserType: String!
+  isDeleted: Int
+}
+
+input UserInputs {
+  Name: String!
+  Email: String!
+  Password: String!
+  UserType: String!
+  isDeleted: Int
+}
+
+type Query {
+  userList: [User!]!
+  detailsList(id: Int): [User!]!
+  checkEmail(Email: String!): [User!]!
+}
+
+type Mutation {
+  addUser(user: UserInputs!): User
+}
