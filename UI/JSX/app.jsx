@@ -31,10 +31,128 @@ class App extends Component {
     this.setState({ rightPanelActive: true });
   };
 
+onCreateAccount = (e) => {
+    e.preventDefault();
+    const form = document.forms.createAccount;
+
+    const Password = form.Password.value.trim();
+    const Email = form.Email.value.trim();
+    const Name = form.Name.value.trim();
+    const ConfirmPassword = form.ConfirmPassword.value.trim();
+
+    if (Password !== ConfirmPassword) {
+      this.setState({ error: 'Password mismatch' });
+      return;
+    }
+
+    if (!/^[a-zA-Z]+$/.test(Name)) {
+      this.setState({ error: 'Name should contain only text' });
+      return;
+    }
+
+    this.setState({ error: '' });
+    const defaultUserType = "User";
+    const userdata = {
+      Name,
+      Email,
+      Password,
+      UserType: defaultUserType,
+      isDeleted: 1,
+    };
+
+    this.createUser(userdata);
+  };
+
+  async createUser(userdata) {
+
+    const Email = userdata.Email;
+    console.log("................Email..."+Email)
+    const query = `query checkEmailData($Email: String!) {
+      checkEmail(Email:$Email) {
+        id
+        Name
+        Email
+        Password
+        UserType
+        isDeleted
+       
+    }
+    
+    }`;
+    const variables = {
+      Email: Email,
+    };
+
+    const response = await fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
+    const result = await response.json();
+    console.log(result.data.checkEmail);
+    if (result.data.checkEmail === null || (result.data.checkEmail!=null && result.data.checkEmail.length <=0)) {
+      const query = `
+      mutation {
+        addUser(user: {
+          Name: "${userdata.Name}"
+          Email: "${userdata.Email}"
+          Password: "${userdata.Password}"
+          UserType: "${userdata.UserType}"
+          isDeleted: ${userdata.isDeleted}
+        }) {
+          id
+          Name
+          Email
+          Password
+          UserType
+          isDeleted
+        }
+      }
+    `;
+
+    const response = await fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
+
+    const result = await response.json();
+    if (result.errors) {
+      this.setState({ success: '', error: result.errors[0].message });
+    } else {
+      this.setState({ success: 'Registration successfull', error: '' });
+      
+    }
+    } else {
+      this.setState({ success: '', error: 'Email already exists' });
+    }
+
+    
+  }
+
+
   
   render() {
   
+    console.log("........loginSuccess..."+this.state.loginSuccess);
+   if (this.state.loginSuccess==="Login successful") {
+    this.setState({ loginSuccess: '', loginError: '' });
+      console.log("........loginSuccess..."+this.state.loginSuccess);
+      return (
+        
+        <>
+        
+            <Routes>
+
+            <Route path='/' element={<UserDashbaord />} />
+            <Route path='/Home' element={<UserDashbaord  />} />
+            <Route path='*' element={<NotFound />} />
+            </Routes>
+        </>
+      )
+    }
     
+
   
     return (
       <div>
