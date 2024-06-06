@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style-type: none;
+}
+
+.nav-container {
+    background-color: rgb(255, 255, 255);
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.nav-container button{
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 18px;  
+  color: white;
+  background-color: #ff7b00; 
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.nav-container button:hover{
+  background-color: #ea6500;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  height: 12vh;
+  padding: 0 20px; 
+  box-shadow: rgba(50, 50, 93, 0.23) 0px 30px 30px -20px;
+}
+
+.logo {
+  width: 300px;
+  height: auto; 
+}
+
+.nav-links {
+  display: flex;
+  justify-content: flex-end;
+  width: 77%;
+}
+
+.nav-links li {
+  color: black;
+  font-size: 20px;
+  padding: 10px 10px;
+  margin: 0 10px;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.hero {
+  text-align: center;
+  margin-top: 15%;
+}
+
+.hero h1 {
+  text-align: center;
+  font-size: 80px;
+}
+
+.mobile-menu-icon {
+  display: none;
+}
+
+button {
+  border: none;
+  font-size: 20px;
+  background: none;
+}
+
+@media (max-width: 768px) {
+  .logo {
+    width: 100px; 
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-links-mobile {
+    position: absolute;
+    display: block;
+    list-style: none;
+    box-shadow: rgba(50, 50, 93, 0.23) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+    left: 0;
+    top: 12vh; 
+    transition: all 0.5s ease-in-out;
+    width: 100%;
+    background-color: white;
+  }
+
+  .nav-links-mobile li {
+    padding: 32px;
+    transition: all 0.5s ease-in-out;
+    text-align: center;
+  }
+
+  .mobile-menu-icon {
+    display: block;
+  }
+
+  .hero h1 {
+    font-size: 50px;
+  }
+}
