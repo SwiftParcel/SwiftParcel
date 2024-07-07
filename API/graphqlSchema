@@ -8,7 +8,57 @@ type User {
   UserType: String!
   isDeleted: Int
 }
-
+type Hub {
+  id: Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
+type Parcel{
+  id: Int!
+  ParcelHeight: Int!
+  ParcelLength: Int!
+  ParcelWidth: Int!
+  ParcelWeight: Int!
+  ParcelStatus: String!
+  ParcelOrigin: String!
+  ParcelDestination: String!
+  ParcelSenderName: String!
+  ParcelTrackingId: String!
+}
+type Collections {
+  id: Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
+type Center {
+  id: Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
+type ContactUs{
+  id:Int!
+  Name:String!
+  Email:String!
+  Message:String!
+}
 input UserInputs {
   Name: String!
   Email: String!
@@ -16,15 +66,116 @@ input UserInputs {
   UserType: String!
   isDeleted: Int
 }
+input HubInputs {
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
+input CollectionInputs {
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
+input CollectionParcelInputs {
+  ParcelHeight: Int!
+  ParcelLength: Int!
+  ParcelWidth: Int!
+  ParcelWeight: Int!
+  ParcelStatus: String!
+  ParcelOrigin: String!
+  ParcelDestination: String!
+  ParcelSenderName: String!
+  ParcelTrackingId: String!
+}
+input ContactUsInputs{
+  Name:String!
+  Email:String!
+  Message:String!
+}
+input CollectionParcelUpdateInputs {
+  id:Int!
+  ParcelHeight: Int!
+  ParcelLength: Int!
+  ParcelWidth: Int!
+  ParcelWeight: Int!
+  ParcelOrigin: String!
+  ParcelDestination: String!
+  ParcelSenderName: String!
+  
+}
+input HubUpdateInputs {
+  id:Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isActive: Int
+}
+input CollectionUpdateInputs {
+  id:Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isActive: Int
+}
+input HubDeleteInputs {
+id:Int!
+isDeleted:Int
+}
+input CollectionDeleteInputs {
+id:Int!
+isDeleted:Int
+}
+input CenterInputs {
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  isDeleted: Int
+  isActive: Int
+}
 
 type Query {
   userList: [User!]!
+  hubList: [Hub!]!
+  collectionParcelList: [Parcel!]!
+  hubdetailsList (id:Int): [Hub!]!
+  collectionParceldetailsList (id:Int): [Parcel!]!
+  collectionList: [Collections!]!
+  collectiondetailsList (id:Int): [Collections!]!
   detailsList(id: Int): [User!]!
+
 login(Email: String!, Password: String!): [User!]!
-  
+
   checkEmail(Email: String!): [User!]!
 }
 
 type Mutation {
   addUser(user: UserInputs!): User
+  addHub(hub: HubInputs!): Hub
+  addContactData(contactData: ContactUsInputs!): ContactUs
+  addCollectionParcel(collectionParcel: CollectionParcelInputs!): Parcel
+  addCollection(collection: CollectionInputs!): Collections
+  hubUpdate(hub: HubUpdateInputs!): Hub!  
+  hubDelete(hub: HubDeleteInputs!): Hub!
+  collectionParcelUpdate(collectionParcel: CollectionParcelUpdateInputs!): Parcel! 
+  collectionUpdate(collection: CollectionUpdateInputs!): Collections!  
+  collectionDelete(collection: CollectionDeleteInputs!): Collections!
 }
