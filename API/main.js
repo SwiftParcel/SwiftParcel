@@ -179,6 +179,13 @@ async function detailsCollectionData(id) {
   console.log('detailsCollectionData...' + id);
   return await getDBCollectiondetailsData(id);
 }
+=======
+async function loginData(Email,Password) {
+  console.log('loginData...' + Email,Password);
+  return await getDBloginData(Email,Password);
+}
+
+
 const resolvers = {
   Query: {
     userList: getUser,
@@ -186,7 +193,10 @@ const resolvers = {
     collectionParcelList: getCollectionParcelDetails,
     collectionList: getCollectionDetails,
     detailsList: (parent, { id }) => detailsData(id),
-    login: (_, { Email,Password }) => loginData(Email,Password),
+
+login: (_, { Email,Password }) => loginData(Email,Password),
+
+
     checkEmail: (_, { Email }) => checkEmailData(Email),
     hubdetailsList: (parent, { id }) => detailsData(id),
     collectionParceldetailsList: (parent, { id }) => detailsCollectionParcelData(id),

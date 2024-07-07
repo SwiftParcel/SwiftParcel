@@ -131,7 +131,46 @@ onCreateAccount = (e) => {
   }
 
 
-  
+  onLogin = async (e) => {
+    e.preventDefault();
+    const form = document.forms.loginForm;
+    const Email = form.Email.value.trim();
+    const Password = form.Password.value.trim();
+    console.log("Email.."+Email);
+    console.log("Password.."+Password);
+    const query = `query loginData($Email: String!,$Password: String!) {
+      login(Email:$Email,Password: $Password) {
+        id
+        Name
+        Email
+        Password
+        UserType
+        isDeleted
+       
+    }
+    
+    }`;
+    const variables = {
+      Email: Email,
+      Password: Password,
+    };
+
+    const response = await fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
+    const result = await response.json();
+    console.log(result.data.login);
+    if (result.data.login === null || (result.data.login!=null && result.data.login.length <=0)) {
+      this.setState({ loginError: "Incorrect UserName or Password", loginSuccess: '' });
+    } else {
+      this.setState({ loginSuccess: "Login successful", loginError: '' });
+      console.log("this.props.navigate");
+      window.location.href = '/#/Home';
+    }
+  };
+
   render() {
   
     console.log("........loginSuccess..."+this.state.loginSuccess);

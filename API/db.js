@@ -95,6 +95,7 @@ async function getDBdetailsData(id) {
   const user = await db.collection('customer_details').find({ id }).toArray();
   return user;
 }
+
 async function getDBHubdetailsData(id) {
   const filter = {};
   console.log('in getDBHubdetailsData' + id); 
@@ -117,12 +118,14 @@ async function getDBCollectiondetailsData(id) {
   console.log('in collection....' + collection[0].id);
   return collection;
 }
+
 async function getDBloginData(Email,Password) {
   console.log(".........getDBloginData..."+Email);
   const user = await db.collection('customer_details').find({ Email: Email, Password: Password,  }).toArray();
   console.log(".........user..."+user);
   return user;
 }
+
 async function checkEmailExists(Email) {
   console.log(".........checkEmailExists..."+Email);
   const user = await db.collection('customer_details').find({ Email: Email, }).toArray();

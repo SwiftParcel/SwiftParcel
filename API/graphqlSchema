@@ -161,7 +161,9 @@ type Query {
   collectionList: [Collections!]!
   collectiondetailsList (id:Int): [Collections!]!
   detailsList(id: Int): [User!]!
-  login(Email: String!, Password: String!): [User!]!
+
+login(Email: String!, Password: String!): [User!]!
+
   checkEmail(Email: String!): [User!]!
 }
 
