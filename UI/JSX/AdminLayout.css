@@ -1,0 +1,142 @@
+/* AdminLayout.css */
+.admin-dashboard-container {
+    display: flex;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background: linear-gradient(180deg, #9c2204, #FD3A69); /* Orange gradient background */
+    color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.brand-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.admin-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.admin-sidebar ul li {
+    margin: 20px 0;
+}
+
+.admin-sidebar ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-size: 17px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.admin-sidebar ul li a.active,
+.admin-sidebar ul li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.admin-sidebar ul li a svg {
+    margin-right: 10px;
+}
+
+.admin-content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 1024px) {
+    .admin-sidebar {
+        width: 200px;
+    }
+
+    .admin-content {
+        padding: 15px;
+    }
+
+    .admin-sidebar ul li {
+        margin: 10px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-dashboard-container {
+        flex-direction: column;
+    }
+
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        transform: translateY(0);
+    }
+
+    .admin-content {
+        padding: 10px;
+    }
+
+    .admin-sidebar ul li {
+        margin: 8px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-sidebar {
+        display: none; /* Hide sidebar on mobile */
+        position: absolute;
+        width: 250px;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        transform: translateX(-100%);
+    }
+
+    .admin-sidebar.active {
+        display: block;
+        transform: translateX(0);
+    }
+
+    .admin-content {
+        padding: 10px;
+    }
+}
+
+/* Hamburger Menu Icon */
+.hamburger-menu {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 20;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+    .hamburger-menu {
+        display: block;
+    }
+}
