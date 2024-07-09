@@ -119,20 +119,6 @@ async function getDBCollectiondetailsData(id) {
   return collection;
 }
 
-async function getDBloginData(Email,Password) {
-  console.log(".........getDBloginData..."+Email);
-  const user = await db.collection('customer_details').find({ Email: Email, Password: Password,  }).toArray();
-  console.log(".........user..."+user);
-  return user;
-}
-
-async function checkEmailExists(Email) {
-  console.log(".........checkEmailExists..."+Email);
-  const user = await db.collection('customer_details').find({ Email: Email, }).toArray();
-  console.log(".........user..."+user);
-  return user;
-}
-
 async function getUserByEmailAndPassword(email, password) {
   return await db.collection('customer_details').findOne({ Email: email, Password: password, isDeleted: 1 });
 }
@@ -261,6 +247,137 @@ async function deleteDbCollection(id, changes) {
   }
   
 }
+
+async function insertDbUser(user) {
+  try {
+    // Insert into 'login' collection
+    const loginInsertResult = await db.collection('login').insertOne({
+      username: user.username,
+      password: user.password,
+      user_type: 'User',
+      isDeleted: 1,
+    });
+    console.log("Login data stored:", loginInsertResult);
+
+    const loginId = loginInsertResult.insertedId;
+
+    // Insert into 'customer_details' collection
+    const customerInsertResult = await db.collection('customer_details').insertOne({
+      cust_ID: await getNextSequence('customer_details'),
+      Cust_name: user.Cust_name,
+      cust_contact: user.cust_contact,
+      cust_email: user.cust_email,
+      log_id: loginId,
+    });
+    console.log("Customer data stored:", customerInsertResult);
+
+    if (customerInsertResult.acknowledged) {
+      return {
+        cust_ID: customerInsertResult.insertedId.toString(),
+        Cust_name: user.Cust_name,
+        cust_contact: user.cust_contact,
+        cust_email: user.cust_email,
+        log_id: loginId,
+      };
+    } else {
+      throw new Error('Failed to insert user');
+    }
+  } catch (error) {
+    console.error('Error adding user:', error);
+    throw error; // Ensure errors are propagated for proper handling
+  }
+}
+
+async function getDBloginData(Email, Password) {
+  console.log("inside getDBloginData");
+  const user = await db.collection('login').findOne({ username: Email, password: Password });
+  if (user) {
+    return {
+      login_Id: user._id.toString(),
+      username: user.username,
+      password: user.password,
+      user_type: user.user_type,
+      isDeleted: user.isDeleted,
+    };
+  } else {
+    return null;
+  }
+}
+
+async function getloginData(Email) {
+  const user = await db.collection('login').findOne({ username: Email });
+  return user;
+}
+
+async function updatePassword(email, newPassword) {
+  const result = await db.collection('login').updateOne(
+    { username: email },
+    { $set: { password: newPassword } }
+  );
+  return result.modifiedCount > 0;
+}
+async function checkEmailExists(Email) {
+  const user = await db.collection('customer_details').findOne({ cust_email: Email });
+  return user;
+}
+
+async function checkEmailExistsEmp(Email) {
+  const user = await db.collection('employee_details').findOne({ emp_email: Email });
+  return user;
+}
+
+async function getUserByEmailAndPassword(email, password) {
+  const user = await db.collection('login').findOne({ username: email, password: password, isDeleted: 1 });
+  console.log("inside getUserByEmailAndPassword");
+  return user;
+}
+
+//Employee
+async function insertDbEmployee(employee) {
+  try {
+    // Insert into 'login' collection
+    const loginInsertResult = await db.collection('login').insertOne({
+      username: employee.username,
+      password: employee.password,
+      user_type: 'Employee',
+      isDeleted: 1,
+    });
+
+    const loginId = loginInsertResult.insertedId;
+
+    // Insert into 'employee_details' collection
+    const employeeInsertResult = await db.collection('employee_details').insertOne({
+      emp_ID: await getNextSequence('employee_details'),
+      Emp_name: employee.Emp_name,
+      emp_role: employee.emp_role,
+      emp_location: employee.emp_location,
+      emp_contact: employee.emp_contact,
+      emp_email: employee.emp_email,
+      shift: employee.shift,
+      log_id: loginId,
+    });
+
+    if (employeeInsertResult.acknowledged) {
+      return {
+        emp_ID: employeeInsertResult.insertedId.toString(),
+        Emp_name: employee.Emp_name,
+        emp_role: employee.emp_role,
+        emp_location: employee.emp_location,
+        emp_contact: employee.emp_contact,
+        emp_email: employee.emp_email,
+        shift: employee.shift,
+        log_id: loginId,
+      };
+    } else {
+      throw new Error('Failed to insert employee');
+    }
+  } catch (error) {
+    console.error('Error adding employee:', error);
+    throw error; 
+  }
+}
+
+
 module.exports = {
   getNextSequence,
   getHubNextSequence,
@@ -288,4 +405,8 @@ module.exports = {
   getDBHubdetailsData,
   getDBCollectionParceldetailsData,
   getDBCollectiondetailsData,
+  insertDbEmployee,
+  checkEmailExistsEmp,
+  updatePassword,
+  getloginData,
 };
