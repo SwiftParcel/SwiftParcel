@@ -80,9 +80,13 @@ li {
 }
 
 button {
-  border: none;
-  font-size: 20px;
-  background: none;
+  background-color: #ffa500;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 @media (max-width: 768px) {

@@ -160,6 +160,17 @@ async function insertRoute(parcelRoute) {
   console.log("inside insertRoute");
   await db.collection('route_details').insertOne(parcelRoute);
 }
+
+
+//tracking
+
+async function getRouteDetailsByTrackingID(trackingID) {
+  // Example implementation
+  console.log("trackingID in getRouteDetailsByTrackingID: "+trackingID);
+  const routeDetails = await db.collection('route_details').findOne({ trackingID });
+  return routeDetails;
+}
+
 async function insertCenter(center) {
   await db.collection('center_details').insertOne(center);
 }
@@ -459,4 +470,5 @@ module.exports = {
   getUserRequestDetails,
   collectionDbRequestUpdate,
   getCollectionRequestDetailsDBForUpdate,
+  getRouteDetailsByTrackingID,
 };

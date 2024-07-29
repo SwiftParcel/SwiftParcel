@@ -1,0 +1,135 @@
+.price-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    height: 100%; /* Ensure it takes full height of its container */
+    padding: 20px;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+    overflow: auto; /* Add overflow handling */
+  }
+  
+  .price-left, .price-right {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff; /* Ensure both sections have the same background */
+  }
+  
+  .price-form-group {
+    margin-bottom: 15px;
+  }
+  
+  .price-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .price-form-group input,
+  .price-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+  }
+  
+  .price-form-group-row {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .price-button {
+    background-color: #ffa500;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .price-button:hover {
+    background-color: #e17000;
+  }
+  
+  .price-info {
+    text-align: center;
+  }
+  
+  .price-image {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .price-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .price-option {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .price-option:hover {
+    background-color: #ffa500;
+    border-color: #ffa500;
+    transform: translateY(-5px);
+  }
+  
+  .price-selected {
+    background-color: #ffa500;
+    color: #fff;
+  }
+  
+  .price-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .price-cancel {
+    background-color: #323232;
+  }
+  
+  .price-cancel:hover {
+    background-color: #b50000;
+  }
+  
+  .price-request {
+    background-color: #ffa500;
+  }
+  
+  .price-request:hover {
+    background-color: #e17000;
+  }
+  
+  .price {
+    font-size: 2em; /* Increased font size for price */
+    font-weight: bold;
+  }
+  
+  .price-details {
+    flex: 1;
+  }
+  
+  .price-dimensions {
+    flex: 1;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  

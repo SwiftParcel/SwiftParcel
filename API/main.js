@@ -19,6 +19,7 @@ const {
   insertContactData,
   dbConnect,
   getDBdetailsData,
+  getRouteDetailsByTrackingID,
   getDBloginData,
   checkEmailExists,
   updateDbHub,
@@ -122,6 +123,8 @@ async function getHubDetails() {
   console.log("getHubDetails");
   return await getDbHubDetails();
 }
+
+
 async function getCollectionParcelDetails() {
   console.log("getcollectionParcelDetails");
   return await getDbCollectionParcelDetails();
@@ -220,10 +223,12 @@ async function detailsCollectionData(id) {
   console.log('detailsCollectionData...' + id);
   return await getDBCollectiondetailsData(id);
 }
+
 const resolvers = {
   Query: {
     userList: getUser,
     hubList: getHubDetails,
+    routeDetails:  (_, { trackingID }) => getRouteDetailsByTrackingID(trackingID),
     collectionParcelList: getCollectionParcelDetails,
     getUserRequestDetails:getUserRequestDetails,
     collectionList: getCollectionDetails,
@@ -287,7 +292,9 @@ const resolvers = {
         await insertCollectionParcel(parcel);
 
         // Insert route into Route table
+
         route.parcelId = parcel.id;
+
         await insertRoute(route);
         console.log("new parcel is: "+parcel);
         console.log("new route is: "+route);
