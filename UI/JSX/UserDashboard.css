@@ -1,0 +1,150 @@
+.userdash-container {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+  }
+  
+  .userdash-header {
+    background-color: #f4772e;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+  }
+  
+  .userdash-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+  }
+  
+  .userdash-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-right: 1px solid #ddd;
+  }
+  
+  .userdash-card-link {
+    text-decoration: none;
+  }
+  
+  .userdash-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f4772e 0%, #fc6100 100%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    color: #ffffff;
+  }
+  
+  .userdash-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .userdash-icon {
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  
+  .userdash-main {
+    padding: 20px;
+  }
+  
+  .userdash-details-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .userdash-form {
+    display: grid;
+    gap: 20px;
+  }
+  
+  .userdash-form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .userdash-form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .userdash-form-group input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .userdash-form-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .userdash-btn {
+    padding: 10px 20px;
+    border: none;
+    margin-top: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .userdash-btn-save {
+    background-color: #ffa500;
+    color: #fff;
+  }
+  
+  .userdash-btn-save:hover {
+    background-color: #e17000;
+  }
+  
+  .userdash-btn-cancel {
+    background-color: #ccc;
+  }
+  
+  .userdash-btn-cancel:hover {
+    background-color: #999;
+  }
+  
+  .userdash-btn-edit {
+    background-color: #f4772e;
+    color: #fff;
+  }
+  
+  .userdash-btn-edit:hover {
+    background-color: #e1ac00;
+  }
+  
+  .userdash-details p {
+    margin-bottom: 10px;
+  }
+  
+  .userdash-footer {
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .userdash-details p {
+    font-size: 1em;
+  }
+  
+  .userdash-details p strong {
+    font-size: 1em;
+  }
+  
+  .userdash-main h2 {
+    margin-bottom: 20px;
+  }
+  
