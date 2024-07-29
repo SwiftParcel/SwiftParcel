@@ -32,6 +32,42 @@ type Parcel{
   ParcelCurrentLocation: String!
   
 }
+type CollectionRequest {
+  id: Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  RequestStatus: String!
+  log_id:String
+  isDeleted: Int
+  isActive: Int
+}
+input CollectionRequestUpdateInputs {
+  id:Int!
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  RequestStatus: String!
+}
+
+input CollectionRequestInputs {
+  Name: String!
+  StreetNo: String!
+  City: String!
+  State: String!
+  Country: String!
+  PostalCode: String!
+  log_id:String
+  isDeleted: Int
+  isActive: Int
+}
+
 type Collections {
   id: Int!
   Name: String!
@@ -77,6 +113,7 @@ input HubInputs {
   isDeleted: Int
   isActive: Int
 }
+
 input CollectionInputs {
   Name: String!
   StreetNo: String!
@@ -215,6 +252,11 @@ type Query {
   login(Email: String!, Password: String!): Login
   checkEmail(Email: String!): User
   checkEmailEmp(Email: String!): Employee
+   collectionParceldetailsList (id:Int): [Parcel!]!
+   collectionParcelList: [Parcel!]!
+   getHubDetails: [Hub!]!
+   requestdetails(loginId: String!): [CollectionRequest]
+   
 }
 
 type Mutation {
@@ -230,4 +272,7 @@ type Mutation {
   collectionDelete(collection: CollectionDeleteInputs!): Collections!
   addEmployee(employee: EmployeeInput!): Employee
   addParcel(parcel: ParcelInput!, route: RouteInput!): Parcel
+   collectionParcelUpdate(collectionParcel: CollectionParcelUpdateInputs!): Parcel! 
+   collectionRequestUpdate(collection: CollectionRequestUpdateInputs!): CollectionRequest! 
+   addCollectionRequest(collectionRequest: CollectionRequestInputs!): CollectionRequest
 }

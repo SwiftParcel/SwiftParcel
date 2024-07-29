@@ -1,4 +1,5 @@
 const fs = require('fs');
+const axios = require('axios');
 require('dotenv').config({ path: 'env.env' });
 const {
   getNextSequence,
@@ -12,7 +13,9 @@ const {
   getDbCollectionDetails,
   insertHub,
   insertCollectionParcel,
+  insertRoute,
   insertCenter,
+  insertCollectionRequest,
   insertContactData,
   dbConnect,
   getDBdetailsData,
@@ -27,20 +30,28 @@ const {
   deleteDbCollection,
   getDBCollectiondetailsData,
   checkEmailExistsEmp,
+  requestdetails,
+  getEmployeeDetails,
   insertDbEmployee,
   getloginData,
   updatePassword,
+  getUserRequestDetails,
+  collectionDbRequestUpdate,
+  getCollectionRequestDetailsDBForUpdate,
  } = require('./db.js');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, gql } = require('apollo-server-express');
 const express = require('express');
-const app = express();
+
 const cors = require('cors'); 
 const nodemailer = require('nodemailer');
+const PORT = process.env.PORT || 8000;
+const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 const myschema = fs.readFileSync('./graphqlSchema', 'utf-8');
+
+const { sendResetPasswordEmail, sendResetPasswordSMS } = require('./emailSMS.js');
 
 async function addUser(_, { user }) {
   try {
@@ -55,6 +66,7 @@ async function addUser(_, { user }) {
     throw new Error('Failed to add user');
   }
 }
+
 async function addHub(_, { hub }) {
   console.log("..............addHub....");
   hub.id = await getHubNextSequence('hub_details');
@@ -73,13 +85,13 @@ async function addContactData(_, { contactData }) {
   return contactData;
 }
 
-async function addCollectionParcel(_, { collectionParcel }) {
+/*async function addCollectionParcel(_, { collectionParcel }) {
   console.log(".............addcollectionParcel....");
   collectionParcel.id = await getCollectionParcelNextSequence('parcel_details');
   console.log("..............addcollectionParcel...."+collectionParcel.id);
   await insertCollectionParcel(collectionParcel);
   return collectionParcel;
-}
+}*/
 
 
 async function addCollection(_, { collection }) {
@@ -90,6 +102,16 @@ async function addCollection(_, { collection }) {
   collection.isActive = 1;
   await insertCenter(collection);
   return collection;
+}
+
+async function addCollectionRequest(_, { collectionRequest }) {
+  console.log("..............collectionRequest....");
+  collectionRequest.id = await getCenterNextSequence('center_details');
+  console.log("..............addCollection...."+collectionRequest.id);
+  collectionRequest.isDeleted = 1;
+  collectionRequest.isActive = 1;
+  await insertCollectionRequest(collectionRequest);
+  return collectionRequest;
 }
 
 async function getUser() {
@@ -115,14 +137,6 @@ async function detailsData(id) {
   return await getDBdetailsData(id);
 }
 
-async function loginData(Email,Password) {
-  console.log('loginData...' + Email,Password);
-  return await getDBloginData(Email,Password);
-}
-async function checkEmailData(Email) {
-  console.log('checkEmailData...' + Email);
-  return await checkEmailExists(Email);
-}
 async function hubUpdate(_, { hub }) {
   console.log('Received hub:', hub);
   try {
@@ -187,24 +201,33 @@ async function detailsCollectionParcelData(id) {
   console.log('detailsData...' + id);
   return await getDBCollectionParceldetailsData(id);
 }
+async function collectionRequestUpdate(_, { collection }) {
+  console.log('Received colletion:', collection);
+  try {
+    const { id, ...changes } = collection;
+    const updatedColletion = await collectionDbRequestUpdate(id, changes);
+    return updatedColletion;
+  } catch (error) {
+    console.error('Error updating colletion:', error);
+    throw error;
+  }
+}
+async function getCollectionRequestDetailsForUpdate(id) {
+  console.log('detailsCollectionData...' + id);
+  return await getCollectionRequestDetailsDBForUpdate(id);
+}
 async function detailsCollectionData(id) {
   console.log('detailsCollectionData...' + id);
   return await getDBCollectiondetailsData(id);
 }
-
-async function loginData(Email,Password) {
-  console.log('loginData...' + Email,Password);
-  return await getDBloginData(Email,Password);
-}
-
-
 const resolvers = {
   Query: {
     userList: getUser,
     hubList: getHubDetails,
     collectionParcelList: getCollectionParcelDetails,
+    getUserRequestDetails:getUserRequestDetails,
     collectionList: getCollectionDetails,
-    detailsList: (parent, { id }) => detailsData(id),
+    detailsList: (_, { id }) => getDBdetailsData(id),
     login: async (_, { Email, Password }) => {
       try {
         const loginData = await getDBloginData(Email, Password);
@@ -214,19 +237,30 @@ const resolvers = {
         throw new Error('Login failed');
       }
     },
+    getUserDetails: async (_, { Id }) => {
+      const BSON = require('bson');
+      const nid = new BSON.ObjectId(Id);
+      const user = await db.collection('customer_details').findOne({ log_id: nid });
+      return user;
+    },
     checkEmail: (_, { Email }) => checkEmailExists(Email),
     checkEmailEmp: (_, { Email }) => checkEmailExistsEmp(Email),
+    requestdetails: (parent, { loginId }) => requestdetails(loginId),
+    getEmployeeDetails: (_, { Id }) => getEmployeeDetails(Id),
     hubdetailsList: (parent, { id }) => detailsData(id),
     collectionParceldetailsList: (parent, { id }) => detailsCollectionParcelData(id),
     collectiondetailsList: (parent, { id }) => detailsCollectionData(id),
+    getCollectionRequestDetailsForUpdate: (parent, { id }) => getCollectionRequestDetailsForUpdate(id),
   },
 
   Mutation: {
     addUser,
     addHub,
     addContactData,
-    addCollectionParcel,
+    //addCollectionParcel,
     addCollection,
+    addCollectionRequest,
+    collectionRequestUpdate,
     hubUpdate,
     collectionParcelUpdate,
     collectionUpdate,
@@ -253,7 +287,7 @@ const resolvers = {
         await insertCollectionParcel(parcel);
 
         // Insert route into Route table
-        //route.parcelId = parcel.id;
+        route.parcelId = parcel.id;
         await insertRoute(route);
         console.log("new parcel is: "+parcel);
         console.log("new route is: "+route);
@@ -264,31 +298,22 @@ const resolvers = {
         throw new Error('Failed to add parcel');
       }
     },
-    
-  },
+    updateUser: async (_, { Id, Cust_name, cust_contact, cust_email }) => {
+      const BSON = require('bson');
+      const nid = new BSON.ObjectId(Id);
+
+      const updateData = {};
+      if (Cust_name !== undefined) updateData.Cust_name = Cust_name;
+      if (cust_contact !== undefined) updateData.cust_contact = cust_contact;
+      if (cust_email !== undefined) updateData.cust_email = cust_email;
+
+      await db.collection('customer_details').updateOne({ log_id: nid }, { $set: updateData });
+
+      const updatedUser = await db.collection('customer_details').findOne({ log_id: nid });
+      return updatedUser;
+    },
+    },
 };
-
-
-app.get('/api/directions', async (req, res) => {
-  const { origin, destination, waypoints, key } = req.query;
-
-  try {
-    const response = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
-      params: {
-        origin,
-        destination,
-        waypoints,
-        key,
-      },
-    });
-
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching directions:', error);
-    res.status(500).send('Failed to fetch directions');
-  }
-});
-
 
 // Handle password reset request
 app.post('/api/request-password-reset', async (req, res) => {
@@ -327,6 +352,26 @@ app.post('/api/request-password-reset', async (req, res) => {
   }
 });
 
+app.get('/api/directions', async (req, res) => {
+  const { origin, destination, waypoints, key } = req.query;
+
+  try {
+    const response = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
+      params: {
+        origin,
+        destination,
+        waypoints,
+        key,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching directions:', error);
+    res.status(500).send('Failed to fetch directions');
+  }
+});
+
 // Endpoint for fetching locations (hubs and centers)
 app.get('/api/locations', async (req, res) => {
   try {
@@ -338,8 +383,9 @@ app.get('/api/locations', async (req, res) => {
   }
 });
 
-const myPort = process.env.API_PORT;
-const server = new ApolloServer({ typeDefs: myschema, resolvers });
+// Initialize Apollo Server
+const server = new ApolloServer({ typeDefs: gql(myschema), resolvers });
+
 // Start Apollo Server and integrate with Express app
 server.start().then(() => {
   server.applyMiddleware({ app, path: '/graphql' });
@@ -349,8 +395,8 @@ server.start().then(() => {
     // Assign db to global variable for access throughout the application
     global.db = database;
 
-    app.listen({ port: process.env.API_PORT || 8000 }, () =>
-      console.log(`Server running at http://localhost:${process.env.API_PORT || 8000}${server.graphqlPath}`)
+    app.listen({ port: PORT }, () =>
+      console.log(`Server running at http://localhost:${PORT}${server.graphqlPath}`)
     );
   });
 });
@@ -360,4 +406,3 @@ app.use(cors({
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type'],
 }));
-

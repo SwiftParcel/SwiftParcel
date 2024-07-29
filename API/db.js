@@ -64,6 +64,36 @@ async function getDbHubDetails() {
   console.log("hublist......"+hublist);
   return hublist;
 }
+async function getCollectionRequestDetailsDBForUpdate(id) {
+  const filter = {};
+  console.log('in getCollectionRequestDetailsDBForUpdate' + id); 
+  const collection = await db.collection('collection_request_details').find({ id }).toArray();
+  console.log('in collection....' + collection[0].id);
+  return collection;
+}
+async function getUserRequestDetails() {
+  const query = { isDeleted: 1,RequestStatus:"In Progress"};
+  const user = await db.collection('collection_request_details').find(query).toArray();
+  return user;
+}
+//update collection center  data
+async function collectionDbRequestUpdate(id, changes) {
+  console.log('in update collection', id);
+  console.log('in update collection changes', changes);
+  
+  if (
+    
+    changes.RequestStatus 
+    
+  ) {
+    const collection = await db.collection('collection_request_details').findOne({ id });
+    Object.assign(collection, changes);
+    // validate(issue);
+  }
+  await db.collection('collection_request_details').updateOne({ id }, { $set: changes });
+  const savedcollection = await db.collection('collection_request_details').findOne({ id });
+  return savedcollection;
+}
 async function getDbCollectionParcelDetails() {
   const collectionParcellist = await db.collection('parcel_details').find().toArray();
   console.log("CollectionParcellist......"+collectionParcellist);
@@ -76,8 +106,45 @@ async function getDbCollectionDetails() {
   return collectionlist;
 }
 async function insertDbUser(user) {
-  await db.collection('customer_details').insertOne(user);
+  try {
+    // Insert into 'login' collection
+    const loginInsertResult = await db.collection('login').insertOne({
+      username: user.username,
+      password: user.password,
+      user_type: 'User',
+      isDeleted: 1,
+    });
+    console.log("Login data stored:", loginInsertResult);
+
+    const loginId = loginInsertResult.insertedId;
+
+    // Insert into 'customer_details' collection
+    const customerInsertResult = await db.collection('customer_details').insertOne({
+      cust_ID: await getNextSequence('customer_details'),
+      Cust_name: user.Cust_name,
+      cust_contact: user.cust_contact,
+      cust_email: user.cust_email,
+      log_id: loginId,
+    });
+    console.log("Customer data stored:", customerInsertResult);
+
+    if (customerInsertResult.acknowledged) {
+      return {
+        cust_ID: customerInsertResult.insertedId.toString(),
+        Cust_name: user.Cust_name,
+        cust_contact: user.cust_contact,
+        cust_email: user.cust_email,
+        log_id: loginId,
+      };
+    } else {
+      throw new Error('Failed to insert user');
+    }
+  } catch (error) {
+    console.error('Error adding user:', error);
+    throw error; // Ensure errors are propagated for proper handling
+  }
 }
+
 async function insertHub(hub) {
   await db.collection('hub_details').insertOne(hub);
 }
@@ -85,17 +152,26 @@ async function insertContactData(contactData) {
   await db.collection('user_messages').insertOne(contactData);
 }
 async function insertCollectionParcel(collectionParcel) {
+  console.log("inside insertCollectionParcel");
   await db.collection('parcel_details').insertOne(collectionParcel);
 }
 
+async function insertRoute(parcelRoute) {
+  console.log("inside insertRoute");
+  await db.collection('route_details').insertOne(parcelRoute);
+}
 async function insertCenter(center) {
   await db.collection('center_details').insertOne(center);
 }
-async function getDBdetailsData(id) {
-  const user = await db.collection('customer_details').find({ id }).toArray();
-  return user;
+async function insertCollectionRequest(request) {
+  request.RequestStatus="In Progress";
+  await db.collection('collection_request_details').insertOne(request);
 }
 
+async function getDBdetailsData(id) {
+  const user = await db.collection('customer_details').findOne({ cust_ID: id });
+  return user;
+}
 async function getDBHubdetailsData(id) {
   const filter = {};
   console.log('in getDBHubdetailsData' + id); 
@@ -118,9 +194,60 @@ async function getDBCollectiondetailsData(id) {
   console.log('in collection....' + collection[0].id);
   return collection;
 }
+async function getDBloginData(Email, Password) {
+  console.log("inside getDBloginData");
+  const user = await db.collection('login').findOne({ username: Email, password: Password });
+  if (user) {
+    return {
+      login_Id: user._id.toString(),
+      username: user.username,
+      password: user.password,
+      user_type: user.user_type,
+      isDeleted: user.isDeleted,
+    };
+  } else {
+    return null;
+  }
+}
+
+async function getloginData(Email) {
+  const user = await db.collection('login').findOne({ username: Email });
+  return user;
+}
+
+async function updatePassword(email, newPassword) {
+  const result = await db.collection('login').updateOne(
+    { username: email },
+    { $set: { password: newPassword } }
+  );
+  return result.modifiedCount > 0;
+}
+async function checkEmailExists(Email) {
+  const user = await db.collection('customer_details').findOne({ cust_email: Email });
+  return user;
+}
+
+async function checkEmailExistsEmp(Email) {
+  const user = await db.collection('employee_details').findOne({ emp_email: Email });
+  return user;
+}
+async function requestdetails(loginId) {
+  const user = await db.collection('collection_request_details').find({ log_id: loginId }).toArray();;
+  return user;
+}
+async function getEmployeeDetails(Id) {
+  const BSON = require('bson');
+  const nid = new BSON.ObjectId(Id)
+  console.log("........nid..."+nid);
+  const user = await db.collection('employee_details').findOne({ log_id: nid });
+  return user;
+}
+
 
 async function getUserByEmailAndPassword(email, password) {
-  return await db.collection('customer_details').findOne({ Email: email, Password: password, isDeleted: 1 });
+  const user = await db.collection('login').findOne({ username: email, password: password, isDeleted: 1 });
+  console.log("inside getUserByEmailAndPassword");
+  return user;
 }
 
 //update hub data
@@ -159,7 +286,8 @@ async function updateDbCollectionParcel(id, changes) {
     changes.ParcelWeight ||
     changes.ParcelOrigin ||
     changes.ParcelDestination ||
-    changes.ParcelSenderName 
+    changes.ParcelSenderName ||
+    changes.ParcelCurrentLocation 
     
   ) {
     const hub = await db.collection('parcel_details').findOne({ id });
@@ -248,94 +376,6 @@ async function deleteDbCollection(id, changes) {
   
 }
 
-async function insertDbUser(user) {
-  try {
-    // Insert into 'login' collection
-    const loginInsertResult = await db.collection('login').insertOne({
-      username: user.username,
-      password: user.password,
-      user_type: 'User',
-      isDeleted: 1,
-    });
-    console.log("Login data stored:", loginInsertResult);
-
-    const loginId = loginInsertResult.insertedId;
-
-    // Insert into 'customer_details' collection
-    const customerInsertResult = await db.collection('customer_details').insertOne({
-      cust_ID: await getNextSequence('customer_details'),
-      Cust_name: user.Cust_name,
-      cust_contact: user.cust_contact,
-      cust_email: user.cust_email,
-      log_id: loginId,
-    });
-    console.log("Customer data stored:", customerInsertResult);
-
-    if (customerInsertResult.acknowledged) {
-      return {
-        cust_ID: customerInsertResult.insertedId.toString(),
-        Cust_name: user.Cust_name,
-        cust_contact: user.cust_contact,
-        cust_email: user.cust_email,
-        log_id: loginId,
-      };
-    } else {
-      throw new Error('Failed to insert user');
-    }
-  } catch (error) {
-    console.error('Error adding user:', error);
-    throw error; // Ensure errors are propagated for proper handling
-  }
-}
-
-async function getDBloginData(Email, Password) {
-  console.log("inside getDBloginData");
-  const user = await db.collection('login').findOne({ username: Email, password: Password });
-  if (user) {
-    return {
-      login_Id: user._id.toString(),
-      username: user.username,
-      password: user.password,
-      user_type: user.user_type,
-      isDeleted: user.isDeleted,
-    };
-  } else {
-    return null;
-  }
-}
-
-async function getloginData(Email) {
-  const user = await db.collection('login').findOne({ username: Email });
-  return user;
-}
-
-async function updatePassword(email, newPassword) {
-  const result = await db.collection('login').updateOne(
-    { username: email },
-    { $set: { password: newPassword } }
-  );
-  return result.modifiedCount > 0;
-}
-async function checkEmailExists(Email) {
-  const user = await db.collection('customer_details').findOne({ cust_email: Email });
-  return user;
-}
-
-async function checkEmailExistsEmp(Email) {
-  const user = await db.collection('employee_details').findOne({ emp_email: Email });
-  return user;
-}
-
-async function getUserByEmailAndPassword(email, password) {
-  const user = await db.collection('login').findOne({ username: email, password: password, isDeleted: 1 });
-  console.log("inside getUserByEmailAndPassword");
-  return user;
-}
-async function insertRoute(parcelRoute) {
-  console.log("inside insertRoute");
-  await db.collection('route_details').insertOne(parcelRoute);
-}
-
 //Employee
 async function insertDbEmployee(employee) {
   try {
@@ -381,7 +421,6 @@ async function insertDbEmployee(employee) {
   }
 }
 
-
 module.exports = {
   getNextSequence,
   getHubNextSequence,
@@ -392,6 +431,7 @@ module.exports = {
   insertContactData,
   insertCollectionParcel,
   insertCenter,
+  insertCollectionRequest,
   getDbUser,
   getDbHubDetails,
   getDbCollectionParcelDetails,
@@ -401,6 +441,12 @@ module.exports = {
   getDBloginData,
   getUserByEmailAndPassword,
   checkEmailExists,
+  checkEmailExistsEmp,
+  requestdetails,
+  getEmployeeDetails,
+  insertDbEmployee,
+  getloginData,
+  updatePassword,
   updateDbHub,
   updateDbCollectionParcel,
   updateDbCollection,
@@ -409,9 +455,8 @@ module.exports = {
   getDBHubdetailsData,
   getDBCollectionParceldetailsData,
   getDBCollectiondetailsData,
-  insertDbEmployee,
-  checkEmailExistsEmp,
-  updatePassword,
-  getloginData,
   insertRoute,
+  getUserRequestDetails,
+  collectionDbRequestUpdate,
+  getCollectionRequestDetailsDBForUpdate,
 };
