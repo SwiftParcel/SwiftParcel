@@ -29,6 +29,8 @@ type Parcel{
   ParcelDestination: String!
   ParcelSenderName: String!
   ParcelTrackingId: String!
+  ParcelCurrentLocation: String!
+  
 }
 type Collections {
   id: Int!
@@ -85,16 +87,17 @@ input CollectionInputs {
   isDeleted: Int
   isActive: Int
 }
-input CollectionParcelInputs {
+input CollectionParcelUpdateInputs {
+  id:Int!
   ParcelHeight: Int!
   ParcelLength: Int!
   ParcelWidth: Int!
   ParcelWeight: Int!
-  ParcelStatus: String!
   ParcelOrigin: String!
   ParcelDestination: String!
   ParcelSenderName: String!
-  ParcelTrackingId: String!
+  ParcelCurrentLocation: String!
+  
 }
 input ContactUsInputs{
   Name:String!
@@ -180,6 +183,25 @@ input EmployeeInput {
   password: String!
 }
 
+input RouteInput {
+  trackingID: String!
+  route: String!
+  currentLocation: String!
+  origin: String!
+  destination: String!
+  waypoints: [String!]!
+}
+type Route {
+  id: Int!
+  trackingID: String!
+  route: String!
+  currentLocation: String!
+  origin: String!
+  destination: String!
+  waypoints: [String!]!
+}
+
+
 
 type Query {
   userList: [User!]!
@@ -207,4 +229,5 @@ type Mutation {
   collectionUpdate(collection: CollectionUpdateInputs!): Collections!  
   collectionDelete(collection: CollectionDeleteInputs!): Collections!
   addEmployee(employee: EmployeeInput!): Employee
+  addParcel(parcel: ParcelInput!, route: RouteInput!): Parcel
 }

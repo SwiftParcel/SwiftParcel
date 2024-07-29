@@ -246,8 +246,49 @@ const resolvers = {
         throw new Error('Failed to add employee');
       }
     },
+    addParcel: async (_, { parcel, route }) => {
+      try {
+        // Insert parcel into Parcel table
+        parcel.id = await getCollectionParcelNextSequence('parcel_details');
+        await insertCollectionParcel(parcel);
+
+        // Insert route into Route table
+        //route.parcelId = parcel.id;
+        await insertRoute(route);
+        console.log("new parcel is: "+parcel);
+        console.log("new route is: "+route);
+        // Return the inserted parcel
+        return parcel;
+      } catch (error) {
+        console.error('Error adding parcel:', error);
+        throw new Error('Failed to add parcel');
+      }
+    },
+    
   },
 };
+
+
+app.get('/api/directions', async (req, res) => {
+  const { origin, destination, waypoints, key } = req.query;
+
+  try {
+    const response = await axios.get('https://maps.googleapis.com/maps/api/directions/json', {
+      params: {
+        origin,
+        destination,
+        waypoints,
+        key,
+      },
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching directions:', error);
+    res.status(500).send('Failed to fetch directions');
+  }
+});
+
 
 // Handle password reset request
 app.post('/api/request-password-reset', async (req, res) => {

@@ -331,6 +331,10 @@ async function getUserByEmailAndPassword(email, password) {
   console.log("inside getUserByEmailAndPassword");
   return user;
 }
+async function insertRoute(parcelRoute) {
+  console.log("inside insertRoute");
+  await db.collection('route_details').insertOne(parcelRoute);
+}
 
 //Employee
 async function insertDbEmployee(employee) {
@@ -409,4 +413,5 @@ module.exports = {
   checkEmailExistsEmp,
   updatePassword,
   getloginData,
+  insertRoute,
 };
