@@ -1,12 +1,11 @@
 scalar GraphQLDate
 
 type User {
-  id: Int!
-  Name: String!
-  Email: String!
-  Password: String!
-  UserType: String!
-  isDeleted: Int
+  cust_ID: ID!
+  Cust_name: String!
+  cust_contact: String
+  cust_email: String!
+  log_id: ID!
 }
 type Hub {
   id: Int!
@@ -30,6 +29,8 @@ type Parcel{
   ParcelDestination: String!
   ParcelSenderName: String!
   ParcelTrackingId: String!
+  ParcelCurrentLocation: String!
+  
 }
 type Collections {
   id: Int!
@@ -59,12 +60,12 @@ type ContactUs{
   Email:String!
   Message:String!
 }
-input UserInputs {
-  Name: String!
-  Email: String!
-  Password: String!
-  UserType: String!
-  isDeleted: Int
+input UserInput {
+  Cust_name: String!
+  cust_contact: String
+  cust_email: String!
+  username: String!
+  password: String!
 }
 input HubInputs {
   Name: String!
@@ -86,16 +87,17 @@ input CollectionInputs {
   isDeleted: Int
   isActive: Int
 }
-input CollectionParcelInputs {
+input CollectionParcelUpdateInputs {
+  id:Int!
   ParcelHeight: Int!
   ParcelLength: Int!
   ParcelWidth: Int!
   ParcelWeight: Int!
-  ParcelStatus: String!
   ParcelOrigin: String!
   ParcelDestination: String!
   ParcelSenderName: String!
-  ParcelTrackingId: String!
+  ParcelCurrentLocation: String!
+  
 }
 input ContactUsInputs{
   Name:String!
@@ -152,6 +154,55 @@ input CenterInputs {
   isActive: Int
 }
 
+type Login {
+  login_Id: ID!
+  username: String!
+  password: String!
+  user_type: String!
+  isDeleted: Int
+}
+
+type Employee {
+  emp_ID: ID!
+  Emp_name: String!
+  emp_role: String!
+  emp_location: String!
+  emp_contact: String
+  emp_email: String!
+  shift: String
+  log_id: ID!
+}
+input EmployeeInput {
+  Emp_name: String!
+  emp_role: String!
+  emp_location: String!
+  emp_contact: String
+  emp_email: String!
+  shift: String
+  username: String!
+  password: String!
+}
+
+input RouteInput {
+  trackingID: String!
+  route: String!
+  currentLocation: String!
+  origin: String!
+  destination: String!
+  waypoints: [String!]!
+}
+type Route {
+  id: Int!
+  trackingID: String!
+  route: String!
+  currentLocation: String!
+  origin: String!
+  destination: String!
+  waypoints: [String!]!
+}
+
+
+
 type Query {
   userList: [User!]!
   hubList: [Hub!]!
@@ -161,10 +212,9 @@ type Query {
   collectionList: [Collections!]!
   collectiondetailsList (id:Int): [Collections!]!
   detailsList(id: Int): [User!]!
-
-login(Email: String!, Password: String!): [User!]!
-
-  checkEmail(Email: String!): [User!]!
+  login(Email: String!, Password: String!): Login
+  checkEmail(Email: String!): User
+  checkEmailEmp(Email: String!): Employee
 }
 
 type Mutation {
@@ -178,4 +228,6 @@ type Mutation {
   collectionParcelUpdate(collectionParcel: CollectionParcelUpdateInputs!): Parcel! 
   collectionUpdate(collection: CollectionUpdateInputs!): Collections!  
   collectionDelete(collection: CollectionDeleteInputs!): Collections!
+  addEmployee(employee: EmployeeInput!): Employee
+  addParcel(parcel: ParcelInput!, route: RouteInput!): Parcel
 }
