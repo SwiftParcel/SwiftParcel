@@ -1,4 +1,6 @@
 import React from 'react';
+
+
 export default class CollectionParcelCreation extends React.Component {
   constructor() {
     super();
@@ -7,51 +9,47 @@ export default class CollectionParcelCreation extends React.Component {
     };
   }
 
-  onAddCollectionParcel = (e) => {
+  onAddCollectionParcel = async (e) => {
     e.preventDefault();
-        const form = document.forms.createCollectionParcelForm;
+    const form = document.forms.createCollectionParcelForm;
 
     const ParcelHeight = form.ParcelHeight.value.trim();
-    console.log("in ParcelHeight"+ParcelHeight)
     const ParcelLength = form.ParcelLength.value.trim();
     const ParcelWidth = form.ParcelWidth.value.trim();
     const ParcelWeight = form.ParcelWeight.value.trim();
     const ParcelOrigin = form.ParcelOrigin.value.trim();
     const ParcelDestination = form.ParcelDestination.value.trim();
-    const ParcelSenderName =form.ParcelSenderName.value.trim();
+    const ParcelSenderName = form.ParcelSenderName.value.trim();
+    const ParcelCurrentLocation = form.ParcelOrigin.value.trim();
 
     this.setState({ error: '' });
-  
 
-    // Check if any of the required fields is empty
     if (!ParcelHeight || !ParcelLength || !ParcelWidth || !ParcelWeight || !ParcelOrigin || !ParcelDestination || !ParcelSenderName) {
       this.setState({ error: 'All fields are required' });
       return;
     }
 
-    
-    this.setState({ error: '' });
+    let trackingId = Math.random().toString(36).substr(2, 8);
+    console.log(".........trackingId......."+trackingId);
 
-    let trackingId = Math.random().toString(36).split('').filter( function(value, index, self) { 
-      return self.indexOf(value) === index;
-  }).join('').substr(2,8);
-
-  console.log(".........trackingId......."+trackingId);
-    let collectionParceldata = {
-      ParcelHeight: form.ParcelHeight.value,
-      ParcelLength: form.ParcelLength.value,
-      ParcelWidth: form.ParcelWidth.value,
-      ParcelWeight: form.ParcelWeight.value,
+    const parcelData = {
+      ParcelHeight: parseInt(ParcelHeight, 10),
+      ParcelLength: parseInt(ParcelLength, 10),
+      ParcelWidth: parseInt(ParcelWidth, 10),
+      ParcelWeight: parseInt(ParcelWeight, 10),
       ParcelStatus: "Ready To Dispatch",
-      ParcelOrigin: form.ParcelOrigin.value,
-      ParcelDestination: form.ParcelDestination.value,
-      ParcelSenderName:form.ParcelSenderName.value,
+      ParcelOrigin,
+      ParcelDestination,
+      ParcelSenderName,
       ParcelTrackingId: trackingId,
-      
+      ParcelCurrentLocation,
     };
+
+    this.props.createCollectionParcel(parcelData);
     form.reset();
-    this.props.createCollectionParcel(collectionParceldata);
   };
+
+  
 
   render() {
     const inputstyles = {
@@ -82,77 +80,81 @@ export default class CollectionParcelCreation extends React.Component {
           style={{ maxWidth: '400px', margin: 'auto', marginTop: '60px' }}
         >
           <div>
-            <label htmlFor='ParcelHeight'>ParcelHeight:</label>
+            <label htmlFor='ParcelHeight'>Parcel Height:</label>
             <input
               type='number'
               id='ParcelHeight'
               name='ParcelHeight'
-              placeholder='Enter ParcelHeight'
+              placeholder='Enter Parcel Height'
               style={inputstyles}
             />
           </div>
           <div>
-            <label htmlFor='ParcelLength'>ParcelLength:</label>
+            <label htmlFor='ParcelLength'>Parcel Length:</label>
             <input
               type='number'
               id='ParcelLength'
               name='ParcelLength'
-              placeholder='Enter ParcelLength'
+              placeholder='Enter Parcel Length'
               style={inputstyles}
             />
           </div>
           <div>
-            <label htmlFor='ParcelWidth'>ParcelWidth:</label>
+            <label htmlFor='ParcelWidth'>Parcel Width:</label>
             <input
               type='number'
               id='ParcelWidth'
               name='ParcelWidth'
-              placeholder='Enter ParcelWidth'
+              placeholder='Enter Parcel Width'
               style={inputstyles}
             />
           </div>
           <div>
-            <label htmlFor='ParcelWeight'>ParcelWeight:</label>
+            <label htmlFor='ParcelWeight'>Parcel Weight:</label>
             <input
               type='number'
               id='ParcelWeight'
               name='ParcelWeight'
+              placeholder='Enter Parcel Weight'
               style={inputstyles}
             />
           </div>
           <div>
-          <label htmlFor='ParcelOrigin'>ParcelOrigin:</label>
+            <label htmlFor='ParcelOrigin'>Parcel Origin:</label>
             <input
               type='text'
               id='ParcelOrigin'
               name='ParcelOrigin'
+              placeholder='Enter Parcel Origin'
               style={inputstyles}
             />
           </div>
           <div>
-          <label htmlFor='ParcelDestination'>ParcelDestination:</label>
+            <label htmlFor='ParcelDestination'>Parcel Destination:</label>
             <input
               type='text'
               id='ParcelDestination'
               name='ParcelDestination'
+              placeholder='Enter Parcel Destination'
               style={inputstyles}
             />
           </div>
           <div>
-          <label htmlFor='ParcelSenderName'>ParcelSenderName:</label>
+            <label htmlFor='ParcelSenderName'>Parcel Sender Name:</label>
             <input
               type='text'
               id='ParcelSenderName'
               name='ParcelSenderName'
+              placeholder='Enter Parcel Sender Name'
               style={inputstyles}
             />
           </div>
-          <div style={{ color: 'red' }}>{this.state.error}</div>
-          <div>
-            <button type='submit' style={submitstyles}>
-              Add Package
-            </button>
-          </div>
+          <button type='submit' style={submitstyles}>
+            Add Parcel
+          </button>
+          {this.state.error && (
+            <div style={{ color: 'red', marginTop: '10px' }}>{this.state.error}</div>
+          )}
         </form>
       </>
     );

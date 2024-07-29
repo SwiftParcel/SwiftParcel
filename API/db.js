@@ -161,6 +161,7 @@ async function insertRoute(parcelRoute) {
   await db.collection('route_details').insertOne(parcelRoute);
 }
 
+
 //tracking
 
 async function getRouteDetailsByTrackingID(trackingID) {
@@ -169,6 +170,7 @@ async function getRouteDetailsByTrackingID(trackingID) {
   const routeDetails = await db.collection('route_details').findOne({ trackingID });
   return routeDetails;
 }
+
 async function insertCenter(center) {
   await db.collection('center_details').insertOne(center);
 }

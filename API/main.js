@@ -292,7 +292,9 @@ const resolvers = {
         await insertCollectionParcel(parcel);
 
         // Insert route into Route table
-        //route.parcelId = parcel.id;
+
+        route.parcelId = parcel.id;
+
         await insertRoute(route);
         console.log("new parcel is: "+parcel);
         console.log("new route is: "+route);
@@ -376,7 +378,6 @@ app.get('/api/directions', async (req, res) => {
     res.status(500).send('Failed to fetch directions');
   }
 });
-
 
 // Endpoint for fetching locations (hubs and centers)
 app.get('/api/locations', async (req, res) => {
