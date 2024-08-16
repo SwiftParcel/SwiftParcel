@@ -4,147 +4,202 @@
     height: 100vh;
     font-family: 'Arial', sans-serif;
     color: #333;
-  }
-  
-  .userdash-header {
-    background-color: #f4772e;
+}
+
+.userdash-header {
+    background-color: #ffa500;
     padding: 20px;
     text-align: center;
     color: #fff;
-  }
-  
-  .userdash-content {
+}
+
+.userdash-content {
     display: grid;
     grid-template-columns: 250px 1fr;
-  }
-  
-  .userdash-sidebar {
+    gap: 20px;
+    padding: 20px;
+}
+
+.userdash-sidebar {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 20px;
     background-color: #f4f4f4;
     border-right: 1px solid #ddd;
-  }
-  
-  .userdash-card-link {
-    text-decoration: none;
-  }
-  
-  .userdash-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #f4772e 0%, #fc6100 100%);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-    color: #ffffff;
-  }
-  
-  .userdash-card:hover {
+}
+
+.userdash-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #f4772e 0%, #fc6100 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  color: #ffffff;
+}
+
+.userdash-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
-  .userdash-icon {
+}
+
+.userdash-icon {
     font-size: 2em;
     margin-bottom: 10px;
-  }
-  
-  .userdash-main {
+}
+
+.userdash-main {
     padding: 20px;
-  }
-  
-  .userdash-details-card {
+    margin-bottom: 20px; 
     background-color: #fff;
-    padding: 20px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .userdash-form {
+}
+
+.userdash-form {
     display: grid;
     gap: 20px;
-  }
-  
-  .userdash-form-group {
+}
+
+.userdash-form-group {
     display: flex;
     flex-direction: column;
-  }
-  
-  .userdash-form-group label {
+}
+
+.userdash-form-group label {
     font-weight: bold;
     margin-bottom: 5px;
-  }
-  
-  .userdash-form-group input {
+}
+
+.userdash-form-group input {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
-  }
-  
-  .userdash-form-actions {
+}
+
+.userdash-form-actions {
     display: flex;
     gap: 10px;
-  }
-  
-  .userdash-btn {
+}
+
+.userdash-btn {
     padding: 10px 20px;
     border: none;
     margin-top: 20px;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .userdash-btn-save {
+}
+
+.userdash-btn-save {
     background-color: #ffa500;
     color: #fff;
-  }
-  
-  .userdash-btn-save:hover {
+}
+
+.userdash-btn-save:hover {
     background-color: #e17000;
-  }
-  
-  .userdash-btn-cancel {
+}
+
+.userdash-btn-cancel {
     background-color: #ccc;
-  }
-  
-  .userdash-btn-cancel:hover {
+}
+
+.userdash-btn-cancel:hover {
     background-color: #999;
-  }
-  
-  .userdash-btn-edit {
-    background-color: #f4772e;
+}
+
+.userdash-btn-edit {
+    background-color: #ffa500;
     color: #fff;
-  }
-  
-  .userdash-btn-edit:hover {
-    background-color: #e1ac00;
-  }
-  
-  .userdash-details p {
+}
+
+.userdash-btn-edit:hover {
+    background-color: #e17000;
+}
+
+.userdash-details p {
     margin-bottom: 10px;
-  }
-  
-  .userdash-footer {
+    font-size: 1.1em; 
+}
+
+.userdash-details p strong {
+    font-size: 1.2em; 
+}
+
+.userdash-footer {
     background-color: #f4f4f4;
     text-align: center;
-    padding: 10px;
+    padding: 20px;
     border-top: 1px solid #ddd;
-  }
-  
-  .userdash-details p {
-    font-size: 1em;
-  }
-  
-  .userdash-details p strong {
-    font-size: 1em;
-  }
-  
-  .userdash-main h2 {
-    margin-bottom: 20px;
-  }
-  
+    z-index: 10; 
+    position: relative;
+}
+
+
+.userdash-content:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+@media (max-width: 1024px) {
+    .userdash-content {
+        grid-template-columns: 200px 1fr;
+    }
+
+    .userdash-header, .userdash-footer {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .userdash-content {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .userdash-sidebar {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .userdash-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .userdash-icon {
+        font-size: 1.5em;
+        margin-bottom: 0;
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .userdash-header, .userdash-footer {
+        padding: 10px;
+    }
+
+    .userdash-main {
+        padding: 15px;
+    }
+
+    .userdash-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+
+    .userdash-icon {
+        font-size: 1.5em;
+    }
+
+    .userdash-btn {
+        padding: 10px;
+    }
+}

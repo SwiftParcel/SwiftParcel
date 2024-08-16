@@ -1,73 +1,86 @@
 .pickupreq-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .pickupreq-title {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .pickupreq-form-card {
-    background: #fff;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.pickupreq-title {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.pickupreq-form-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+}
+
+.pickupreq-form-group {
+  margin-bottom: 15px;
+}
+
+.pickupreq-label {
+  font-weight: bold;
+  color: #333;
+}
+
+.pickupreq-input {
+  width: 100%;
+  padding: 12px 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.pickupreq-input:focus {
+  border-color: #ffa500;
+  outline: none;
+}
+
+.pickupreq-error {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.pickupreq-submit-button {
+  background-color: #ffa500;
+  color: white;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  font-size: 1em;
+}
+
+.pickupreq-submit-button:hover {
+  background-color: #e17000;
+  transform: translateY(-2px);
+}
+
+/* Media Queries for Responsiveness */
+@media (min-width: 768px) {
   .pickupreq-form-group {
-    display: flex;
-    flex-direction: column;
+      display: flex;
+      justify-content: space-between;
   }
-  
-  .pickupreq-label {
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+
+  .pickupreq-form-group .pickupreq-input {
+      width: calc(50% - 10px);
   }
-  
-  .pickupreq-input {
-    padding: 12px 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .pickupreq-form-group {
+      display: block;
   }
-  
-  .pickupreq-input:focus {
-    border-color: #ffa500;
-    outline: none;
-  }
-  
-  .pickupreq-error {
-    grid-column: span 2;
-    color: red;
-    margin-bottom: 10px;
-  }
-  
-  .pickupreq-submit-button {
-    grid-column: span 2;
-    background-color: #ffa500;
-    color: white;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .pickupreq-submit-button:hover {
-    background-color: #e17000;
-    transform: translateY(-2px);
-  }
-  
+}

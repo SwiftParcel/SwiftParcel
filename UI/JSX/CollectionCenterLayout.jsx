@@ -19,12 +19,9 @@ const CollectionCenterLayout = ({ children }) => {
         </div>
         <ul>
         <li><NavLink to="/collectionDash" activeClassName="active"><FaHome /> Dashboard</NavLink></li>
-          <li><NavLink to="/parcel-intake" activeClassName="active"><FaBox /> Parcel Intake</NavLink></li>
           <li><NavLink to="/collectionparcelList" activeClassName="active"><FaShippingFast /> Parcel Management</NavLink></li>
-          <li><NavLink to="/dispatch-management" activeClassName="active"><FaShippingFast /> Dispatch Management</NavLink></li>
-          <li><NavLink to="/print-labels" activeClassName="active"><FaPrint /> Print Parcel Labels</NavLink></li>
-          <li><NavLink to="/notifications" activeClassName="active"><FaBell /> Notifications</NavLink></li>
-          <li><NavLink to="/performance-tracking" activeClassName="active"><FaChartLine /> Performance Tracking</NavLink></li>
+          <li><NavLink to="/userRequestmanagement" activeClassName="active"><FaShippingFast /> User Request Management</NavLink></li>
+          <li><NavLink to="/quote" activeClassName="active"><FaPrint /> Parcel Price Calculator</NavLink></li>
           <li><NavLink to="/" > Back To User Site</NavLink></li>
         </ul>
       </div>

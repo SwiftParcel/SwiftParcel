@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import './footer.css';
 import fb from '../Images/facebook.png';
 import twitter from '../Images/twitter.png';
@@ -35,6 +36,18 @@ const Footer = () => {
                         <a href="/induvidual">
                             <p>Induvidual</p>
                         </a>
+                    </div>
+                    <div className="sb_footer-links-div">
+                        <h4>Logins</h4>
+                        <Link to="/adminDash">
+                            <p>Admin</p>
+                        </Link>
+                        <Link to="/collectionDash">
+                            <p>Collection Center</p>
+                        </Link>
+                        <Link to="/hubDash">
+                            <p>Hub</p>
+                        </Link>
                     </div>
                     <div className="sb_footer-links-div">
                         <h4>For Business</h4>

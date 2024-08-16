@@ -19,12 +19,8 @@ const AdminLayout = ({ children }) => {
         </div>
         <ul>
         <li><NavLink to="/hubDash" activeClassName="active"><FaHome /> Dashboard</NavLink></li>
-          <li><NavLink to="/admin/user-management" activeClassName="active"><FaBox /> Parcel Transfer</NavLink></li>
-          <li><NavLink to="/aadminparcelList" activeClassName="active"><FaRoute /> Route Management</NavLink></li>
-          <li><NavLink to="/aadmincollectionList" activeClassName="active"><FaMapMarkerAlt /> Hub Operations</NavLink></li>
-          <li><NavLink to="/aadminhublist" activeClassName="active"><FaClipboardList />Inventory Management</NavLink></li>
-          <li><NavLink to="/aadmin/analytics-reports" activeClassName="active"><FaChartLine />Performance Metrics</NavLink></li>
-
+          <li><NavLink to="/hubparcelList" activeClassName="active"><FaBox /> Parcel Transfer</NavLink></li>
+          
           <li><NavLink to="/" > Back To User Site</NavLink></li>
         </ul>
       </div>

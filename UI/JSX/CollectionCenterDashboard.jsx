@@ -38,12 +38,12 @@ const CollectionCenterDashboard = () => {
 };
 
 const dashboardItems = [
-  { title: 'Parcel Intake', link: '/parcel-intake', icon: <FaBox />, className: 'parcel-intake' },
+  // { title: 'Parcel Intake', link: '/parcel-intake', icon: <FaBox />, className: 'parcel-intake' },
   { title: 'Parcel Management', link: '/collectionparcelList', icon: <FaBoxOpen />, className: 'parcel-management' },
-  { title: 'Dispatch Management', link: '/dispatch-management', icon: <FaShippingFast />, className: 'dispatch-management' },
-  { title: 'Print Parcel Labels', link: '/print-labels', icon: <FaPrint />, className: 'print-labels' },
-  { title: 'Notifications', link: '/notifications', icon: <FaBell />, className: 'notifications' },
-  { title: 'Performance Tracking', link: '/performance-tracking', icon: <FaChartLine />, className: 'performance-tracking' },
+  { title: 'User Request Management', link: '/userRequestmanagement', icon: <FaShippingFast />, className: 'dispatch-management' },
+   { title: 'Parcel Price Calculator', link: '/quote', icon: <FaPrint />, className: 'print-labels' },
+  // { title: 'Notifications', link: '/notifications', icon: <FaBell />, className: 'notifications' },
+  // { title: 'Performance Tracking', link: '/performance-tracking', icon: <FaChartLine />, className: 'performance-tracking' },
 ];
 
 export default CollectionCenterDashboard;

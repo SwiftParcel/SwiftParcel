@@ -7,11 +7,11 @@ import backgroundImage from '../Images/hero-landing.jpg';
 
 const HubDashboard = () => {
   const dashboardItems = [
-    { title: 'Parcel Transfer', link: '/parcel-transfer', icon: <FaBox />, className: 'parcel-transfer' },
-    { title: 'Route Management', link: '/route-management', icon: <FaRoute />, className: 'route-management' },
-    { title: 'Hub Operations', link: '/hub-operations', icon: <FaMapMarkerAlt />, className: 'hub-operations' },
-    { title: 'Inventory Management', link: '/inventory-management', icon: <FaClipboardList />, className: 'inventory-management' },
-    { title: 'Performance Metrics', link: '/performance-metrics', icon: <FaChartLine />, className: 'performance-metrics' },
+    { title: 'Parcel Transfer', link: '/hubparcelList', icon: <FaBox />, className: 'parcel-transfer' },
+    //  { title: 'Route Management', link: '/userCollectionRequest', icon: <FaRoute />, className: 'route-management' },
+    //  { title: 'Hub Operations', link: '/userPickUpRequestStatus', icon: <FaMapMarkerAlt />, className: 'hub-operations' },
+    // // { title: 'Inventory Management', link: '/inventory-management', icon: <FaClipboardList />, className: 'inventory-management' },
+    // { title: 'Performance Metrics', link: '/performance-metrics', icon: <FaChartLine />, className: 'performance-metrics' },
   ];
 
   return (
