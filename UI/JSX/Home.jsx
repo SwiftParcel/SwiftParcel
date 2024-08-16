@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
+import TranslateWidget from './TranslateWidget.jsx';
 
 import backgroundImage from '../Images/hero-landing.jpg';
 import TrackingIcon from '../Images/tracking-icon.svg';
@@ -13,16 +14,35 @@ import Client1 from '../Images/client-1.jpg';
 import Client2 from '../Images/client-2.jpg';
 import Client3 from '../Images/client-3.jpg';
 const Home = () => {
+  const [trackingID, setTrackingID] = useState('');
+  const navigate = useNavigate();
+  const handleSearchChange = (e) => {
+    setTrackingID(e.target.value);
+  };
+
+  const handleNavigation = (e) => {
+    e.preventDefault();
+    if (trackingID.trim()) {
+      navigate(`/tracking/${trackingID}`);
+    }
+  };
   return (
     <div className="home-container">
+       <TranslateWidget />
       <section className="home-hero" style={{ backgroundImage: `url(${backgroundImage})`}}>
         <div className="hero-overlay">
           <div className="hero-content">
             <h1>Your Package, Our Priority</h1>
             <h2>Track Your Package</h2>
-            <form>
-              <input type="text" placeholder="Tracking ID" /><br></br>
-              <button type="submit">Track</button>
+            <form onSubmit={handleNavigation} >
+                <input
+                  type="text"
+                  name="trackingID"
+                  value={trackingID}
+                  onChange={handleSearchChange}
+                />
+                <button type="submit" >Track</button>
+              
             </form>
            
           </div>

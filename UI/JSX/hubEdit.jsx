@@ -1,24 +1,30 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useLocation, useParams } from 'react-router-dom';
+import { getAffectedRoutes, calculateNewRoute, updateRouteDetails } from './routeing.jsx'; // Import functions from routing
 
 function Myparam(Il) {
-  return (props) => <Il {...props} params={useParams()} loc={useLocation()} />;
+  return (props) => <Il {...props} params={useParams()} loc={useLocation()} navigate={useNavigate()} />;
 }
-class hubEdit extends React.Component {
+
+class HubEdit extends React.Component {
   constructor() {
     super();
     this.state = {
       hub: {},
+      hubs: [], // State to hold the list of active hubs
       invalidFields: {},
+      error: null,
     };
     this.onChange = this.onChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+
   componentDidMount() {
     this.loadData();
+    this.loadHubs(); // Ensure we load hubs when component mounts
   }
+
   componentDidUpdate(prevProps) {
     const {
       params: { id: prevId },
@@ -28,8 +34,10 @@ class hubEdit extends React.Component {
     } = this.props;
     if (id !== prevId) {
       this.loadData();
+      this.loadHubs(); // Reload hubs if the ID changes
     }
   }
+
   onChange(event) {
     const { name, value } = event.target;
     this.setState((prevState) => ({
@@ -40,15 +48,9 @@ class hubEdit extends React.Component {
   async handleSubmit(e) {
     e.preventDefault();
     const { hub } = this.state;
-    // const rowId1 = this.props.params.id;
     const rowId1 = parseInt(this.props.params.id);
     hub.isActive = parseInt(hub.isActive);
-    // const rowId1 = this.props.params.id; // Assigning the value to rowId1
-    const { id, ...changes } = hub; // Removing id from the object
-
-    console.log(' in handle submit1', rowId1);
-    console.log(' in handle submit2', changes);
-    console.log('Value of $id:', parseInt(rowId1));
+    const { id, ...changes } = hub;
 
     try {
       const response = await fetch('http://localhost:8000/graphql', {
@@ -57,7 +59,6 @@ class hubEdit extends React.Component {
         body: JSON.stringify({
           query: `mutation hubUpdate($hub: HubUpdateInputs!) {
             hubUpdate(hub: $hub) {
-                
                 Name
                 StreetNo
                 City
@@ -70,30 +71,56 @@ class hubEdit extends React.Component {
           variables: { hub: { id: rowId1, ...changes } },
         }),
       });
-      console.log('id bbbbbbbbb', hub);
+
       const result = await response.json();
-      console.log('rrr', result);
       if (result.data && result.data.hubUpdate) {
         this.setState({ hub: result.data.hubUpdate });
         alert('Updated hub successfully');
+
+        // Load hubs again to ensure we have the latest data
+        await this.loadHubs();
+
+        const affectedRoutes = await getAffectedRoutes(rowId1);
+
+        if (affectedRoutes.length === 0) {
+          console.log("No affected routes found.");
+          return;
+        }
+
+        // Process each affected route
+        for (const route of affectedRoutes) {
+          const { currentLocation, destination, trackingID } = route;
+
+          // Calculate the new route
+          const newRoute = await calculateNewRoute(currentLocation, destination, this.state.hubs);
+
+          // Prepare route data
+          const newRouteDetails = {
+            trackingID,
+            route: newRoute.route,
+            currentLocation: route.currentLocation,
+            origin: route.origin,
+            destination: route.destination,
+            waypoints: newRoute.waypoints,
+          };
+
+          // Update the route details in the database
+          await updateRouteDetails(trackingID, newRouteDetails);
+        }
+
+        // Navigate to the admin hub list page
         this.props.navigate('/adminhublist');
       } else {
         throw new Error('No data returned from the server');
       }
     } catch (error) {
       console.error('Error updating hub:', error);
-      // Handle error
+      this.setState({ error: 'Failed to update hub' });
     }
   }
 
-  getDetailsForUpdate = (hub) => {
-    const id = parseInt(hub.id);
-    this.detailsData(id);
-  };
   async loadData() {
     const id = parseInt(this.props.params.id);
-
-    console.log('idddd', id);
     const query = `query getDetailsForUpdate($id: Int!) {
       hubdetailsList(id: $id) {
           id,
@@ -105,17 +132,54 @@ class hubEdit extends React.Component {
           PostalCode,
           isActive,
       }
+    }`;
 
-      }`;
-    const response = await fetch('http://localhost:8000/graphql', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, variables: { id } }),
-    });
-    const result = await response.json();
-    console.log('display', result);
-    console.log('display', result.data.hubdetailsList[0]);
-    this.setState({ hub: result.data.hubdetailsList[0] });
+    try {
+      const response = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: { id } }),
+      });
+
+      const result = await response.json();
+      if (result.data && result.data.hubdetailsList.length > 0) {
+        this.setState({ hub: result.data.hubdetailsList[0] });
+      }
+    } catch (error) {
+      console.error('Error fetching hub details:', error);
+      this.setState({ error: 'Failed to fetch hub details' });
+    }
+  }
+
+  async loadHubs() {
+    const query = `
+      query {
+        hubList {
+          id
+          Name
+          StreetNo
+          City
+          State
+          Country
+          isActive
+        }
+      }
+    `;
+    try {
+      const response = await fetch('http://localhost:8000/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+
+      const data = await response.json();
+      if (data.data && data.data.hubList) {
+        this.setState({ hubs: data.data.hubList });
+      }
+    } catch (error) {
+      console.error('Error fetching hubs:', error);
+      this.setState({ error: 'Failed to fetch hubs' });
+    }
   }
 
   render() {
@@ -138,49 +202,30 @@ class hubEdit extends React.Component {
       borderRadius: '4px',
       cursor: 'pointer',
     };
-    console.log(this.props);
+
     const {
-      hub: { id },
+      hub: { Name, StreetNo, City, State, Country, PostalCode, isActive },
+      error,
     } = this.state;
+
     const rowId = this.props.params.id;
-    console.log('rowId', +rowId);
-    {
-    }
+
     if (rowId == null) {
-      if (typeof this.props.params !== 'undefined') {
-        return <h3>{`Hub with ID ${rowId} not found.`}</h3>;
-      }
-      return null;
+      return <h3>{`Hub with ID ${rowId} not found.`}</h3>;
     }
-    const rowId1 = parseInt(this.props.params.id);
-    const {
-      hub: {
-        Name,
-        StreetNo,
-        City,
-        State,
-        Country,
-        PostalCode,
-        isActive,
-        
-      },
-    } = this.state;
+
     return (
-      <form
-        onSubmit={this.handleSubmit}
-        style={{ maxWidth: '400px', margin: 'auto', marginTop: '60px' }}
-      >
+      <form onSubmit={this.handleSubmit} style={{ maxWidth: '400px', margin: 'auto', marginTop: '60px' }}>
         <div>
           <label htmlFor='Name'>Name:</label>
           <input
             type='text'
             id='Name'
             name='Name'
-            value={Name}
+            value={Name || ''}
             onChange={this.onChange}
             placeholder='Enter Name'
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -189,11 +234,10 @@ class hubEdit extends React.Component {
             type='text'
             id='StreetNo'
             name='StreetNo'
-            value={StreetNo}
+            value={StreetNo || ''}
             onChange={this.onChange}
             placeholder='Enter StreetNo'
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -202,11 +246,10 @@ class hubEdit extends React.Component {
             type='text'
             id='City'
             name='City'
-            value={City}
+            value={City || ''}
             onChange={this.onChange}
             placeholder='Enter City'
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -215,10 +258,9 @@ class hubEdit extends React.Component {
             type='text'
             id='State'
             name='State'
-            value={State}
+            value={State || ''}
             onChange={this.onChange}
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -227,10 +269,9 @@ class hubEdit extends React.Component {
             type='text'
             id='Country'
             name='Country'
-            value={Country}
+            value={Country || ''}
             onChange={this.onChange}
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -239,10 +280,9 @@ class hubEdit extends React.Component {
             type='text'
             id='PostalCode'
             name='PostalCode'
-            value={PostalCode}
+            value={PostalCode || ''}
             onChange={this.onChange}
             style={inputstyles}
-            
           />
         </div>
         <div>
@@ -251,14 +291,14 @@ class hubEdit extends React.Component {
             id='isActive'
             name='isActive'
             style={inputstyles}
-            value={isActive}
+            value={isActive || ''}
             onChange={this.onChange}
           >
             <option value='1'>Active</option>
-            <option value='0'>InActive</option>
+            <option value='0'>Inactive</option>
           </select>
         </div>
-        <div style={{ color: 'red' }}>{this.state.error}</div>
+        <div style={{ color: 'red' }}>{error}</div>
         <div>
           <button type='submit' style={submitstyles}>
             Update Hub
@@ -269,4 +309,4 @@ class hubEdit extends React.Component {
   }
 }
 
-export default Myparam(hubEdit);
+export default Myparam(HubEdit);
