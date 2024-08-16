@@ -21,6 +21,7 @@ export default class CollectionParcelCreation extends React.Component {
     const ParcelDestination = form.ParcelDestination.value.trim();
     const ParcelSenderName = form.ParcelSenderName.value.trim();
     const ParcelCurrentLocation = form.ParcelOrigin.value.trim();
+    const ParcelCurrentTime = new Date();
 
     this.setState({ error: '' });
 
@@ -43,6 +44,8 @@ export default class CollectionParcelCreation extends React.Component {
       ParcelSenderName,
       ParcelTrackingId: trackingId,
       ParcelCurrentLocation,
+      ParcelCurrentTime,
+      
     };
 
     this.props.createCollectionParcel(parcelData);
@@ -50,7 +53,50 @@ export default class CollectionParcelCreation extends React.Component {
   };
 
   
+async createParcelHistory(ParcelData) {
+    
+     var status="In transist";
+     if(ParcelData.ParcelCurrentLocation===ParcelData.ParcelDestination){
+      status="Out for delivery";
+     }
+      // Prepare parcel data
+      const parcelHistoryData = {
+        ParceltrackingID: ParcelData.ParcelTrackingId,
+        ParcelcurrentLocation: ParcelData.ParcelCurrentLocation,
+        Parcelcurrenttime: ParcelData.ParcelCurrentTime,
+        Parcelstatus: status,
+      };
+      console.log('ParcelData:', ParcelData);
+     
+      const query = `
+       mutation {
+         addParcelHistory(parcelHistory: {
+           ParceltrackingID: "${parcelHistoryData.ParceltrackingID}"
+           ParcelcurrentLocation: "${parcelHistoryData.ParcelcurrentLocation}"
+           Parcelcurrenttime: "${parcelHistoryData.Parcelcurrenttime}"
+           Parcelstatus: "${parcelHistoryData.Parcelstatus}"
+                    }) {
+           id
+           ParceltrackingID
+           ParcelcurrentLocation
+           Parcelcurrenttime
+           Parcelstatus
+          }
+       }
+     `;
 
+    const response = await fetch('http://localhost:8000/graphql', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
+    const result = await response.json();
+    if (result.errors) {
+      
+    } else {
+      
+    }
+  }
   render() {
     const inputstyles = {
       width: '100%',

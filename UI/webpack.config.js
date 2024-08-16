@@ -5,7 +5,7 @@ module.exports = {
     entry: { app: './JSX/main.jsx' },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'public'),
+        path: path.resolve(__dirname, 'Public'),
     },
     module: {
         rules: [{
@@ -36,14 +36,13 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                   name: 'Images/[name].[ext]',
-                  
                 },
               },
             ],
           },
-
         ],
     },
+    
     optimization: {
         splitChunks: { name: 'vendor', chunks: 'all', },
     },

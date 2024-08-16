@@ -41,8 +41,8 @@ const dashboardItems = [
   // { title: 'Parcel Management', link: '/adminparcelList', icon: <FaBox />, className: 'parcel-management' },
   { title: 'Collection Center Management', link: '/AdminCollectionList', icon: <FaWarehouse />, className: 'collection-center-management' },
   { title: 'Hub Management', link: '/adminhublist', icon: <FaMapMarkedAlt />, className: 'hub-management' },
-  { title: 'Analytics & Reports', link: '/analytics-reports', icon: <FaChartBar />, className: 'analytics-reports' },
-  { title: 'Settings', link: '/settings', icon: <FaCog />, className: 'settings' },
+  { title: 'Analytics & Reports', link: '/CollectionParcelReport', icon: <FaChartBar />, className: 'analytics-reports' },
+  
 ];
 
 export default AdminDashboard;

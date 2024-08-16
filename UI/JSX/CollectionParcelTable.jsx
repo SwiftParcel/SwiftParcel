@@ -15,6 +15,7 @@ class CollectionParcelRow extends React.Component {
         <td className='p-3'>{this.props.collectionParceldata.ParcelDestination}</td>
         <td className='p-3'>{this.props.collectionParceldata.ParcelSenderName}</td>
         <td className='p-3'>{this.props.collectionParceldata.ParcelTrackingId}</td>
+        <td className='p-3'>{this.props.collectionParceldata.ParcelCurrentLocation}</td>
         <td className='p-3'>
          
           <Link
@@ -52,6 +53,7 @@ export default class CollectionParcelTable extends React.Component {
                   <th className='p-3'>Parcel Destination</th>
                   <th className='p-3'>Parcel SenderName</th>
                   <th className='p-3'>Parcel TrackingId</th>
+                  <th className='p-3'>Parcel Current Location</th>
                   <th className='p-3'>Actions</th>
                 </tr>
               </thead>

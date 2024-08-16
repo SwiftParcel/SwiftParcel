@@ -30,46 +30,9 @@ type Parcel{
   ParcelSenderName: String!
   ParcelTrackingId: String!
   ParcelCurrentLocation: String!
+  ParcelCurrentTime: String
   
-
 }
-type CollectionRequest {
-  id: Int!
-  Name: String!
-  StreetNo: String!
-  City: String!
-  State: String!
-  Country: String!
-  PostalCode: String!
-  RequestStatus: String!
-  log_id:String
-  isDeleted: Int
-  isActive: Int
-
-}
-input CollectionRequestUpdateInputs {
-  id:Int!
-  Name: String!
-  StreetNo: String!
-  City: String!
-  State: String!
-  Country: String!
-  PostalCode: String!
-  RequestStatus: String!
-}
-
-input CollectionRequestInputs {
-  Name: String!
-  StreetNo: String!
-  City: String!
-  State: String!
-  Country: String!
-  PostalCode: String!
-  log_id:String
-  isDeleted: Int
-  isActive: Int
-}
-
 type Collections {
   id: Int!
   Name: String!
@@ -123,21 +86,12 @@ type ContactUs{
   Email:String!
   Message:String!
 }
-
 type Login {
   login_Id: ID!
   username: String!
   password: String!
   user_type: String!
   isDeleted: Int
-
-input UserInput {
-  Cust_name: String!
-  cust_contact: String
-  cust_email: String!
-  username: String!
-  password: String!
-
 }
 
 input UserInput {
@@ -177,7 +131,6 @@ input HubInputs {
   isDeleted: Int
   isActive: Int
 }
-
 input CollectionInputs {
   Name: String!
   StreetNo: String!
@@ -188,7 +141,6 @@ input CollectionInputs {
   isDeleted: Int
   isActive: Int
 }
-
 input CollectionRequestInputs {
   Name: String!
   StreetNo: String!
@@ -202,22 +154,30 @@ input CollectionRequestInputs {
 }
 
 input ParcelInput {
-
-input CollectionParcelUpdateInputs {
-  id:Int!
-
   ParcelHeight: Int!
   ParcelLength: Int!
   ParcelWidth: Int!
   ParcelWeight: Int!
+  ParcelStatus: String!
   ParcelOrigin: String!
   ParcelDestination: String!
   ParcelSenderName: String!
-
   ParcelTrackingId: String!
   ParcelCurrentLocation: String!
-  
-
+  ParcelCurrentTime: String
+}
+type ParcelHistory{
+  id:Int!
+  ParceltrackingID:String!
+  ParcelcurrentLocation:String!
+  Parcelcurrenttime:String!
+  Parcelstatus:String!
+}
+input ParcelHistoryInput{
+  ParceltrackingID:String!
+  ParcelcurrentLocation:String!
+  Parcelcurrenttime:String!
+  Parcelstatus:String!
 }
 input ContactUsInputs{
   Name:String!
@@ -234,7 +194,8 @@ input CollectionParcelUpdateInputs {
   ParcelDestination: String!
   ParcelSenderName: String!
   ParcelCurrentLocation: String!
-  
+  ParcelCurrentTime: String
+  ParcelStatus: String
 }
 input HubUpdateInputs {
   id:Int!
@@ -292,66 +253,17 @@ type Route {
   waypoints: [String!]!
 }
 
-type Login {
-  login_Id: ID!
-  username: String!
-  password: String!
-  user_type: String!
-  isDeleted: Int
-}
-
-type Employee {
-  emp_ID: ID!
-  Emp_name: String!
-  emp_role: String!
-  emp_location: String!
-  emp_contact: String
-  emp_email: String!
-  shift: String
-  log_id: ID!
-}
-input EmployeeInput {
-  Emp_name: String!
-  emp_role: String!
-  emp_location: String!
-  emp_contact: String
-  emp_email: String!
-  shift: String
-  username: String!
-  password: String!
-}
-
-input RouteInput {
-  trackingID: String!
-  route: String!
-  currentLocation: String!
-  origin: String!
-  destination: String!
-  waypoints: [String!]!
-}
-type Route {
-  id: Int!
-  trackingID: String!
-  route: String!
-  currentLocation: String!
-  origin: String!
-  destination: String!
-  waypoints: [String!]!
-}
-
-
-
 type Query {
   userList: [User!]!
   hubList: [Hub!]!
-  routeDetails(trackingID: ID!): Route
+  routeDetails(trackingID: String!): Route
   collectionParcelList: [Parcel!]!
+  routes: [Route!]!
   hubdetailsList (id:Int): [Hub!]!
   getHubDetails: [Hub!]!
   collectionParceldetailsList (id:Int): [Parcel!]!
   collectionList: [Collections!]!
   collectiondetailsList (id:Int): [Collections!]!
-
   detailsList(id: ID!): User
   login(Email: String!, Password: String!): Login
   checkEmail(Email: String!): User
@@ -361,7 +273,7 @@ type Query {
   getUserDetails(Id: ID!): User
   getUserRequestDetails:[CollectionRequest!]!
   getCollectionRequestDetailsForUpdate (id:Int): [CollectionRequest!]!
-
+  parcelHistory(ParceltrackingID: String!): [ParcelHistory]
 }
 
 type Mutation {
@@ -369,6 +281,7 @@ type Mutation {
   addHub(hub: HubInputs!): Hub
   addContactData(contactData: ContactUsInputs!): ContactUs
   addParcel(parcel: ParcelInput!, route: RouteInput!): Parcel
+  addParcelHistory(parcelHistory: ParcelHistoryInput!): ParcelHistory
   addCollection(collection: CollectionInputs!): Collections
   addCollectionRequest(collectionRequest: CollectionRequestInputs!): CollectionRequest
   hubUpdate(hub: HubUpdateInputs!): Hub!  
@@ -379,10 +292,5 @@ type Mutation {
   collectionDelete(collection: CollectionDeleteInputs!): Collections!
   addEmployee(employee: EmployeeInput!): Employee
   updateUser(Id: ID!, Cust_name: String, cust_contact: String, cust_email: String): User
-
-  addParcel(parcel: ParcelInput!, route: RouteInput!): Parcel
-   collectionParcelUpdate(collectionParcel: CollectionParcelUpdateInputs!): Parcel! 
-   collectionRequestUpdate(collection: CollectionRequestUpdateInputs!): CollectionRequest! 
-   addCollectionRequest(collectionRequest: CollectionRequestInputs!): CollectionRequest
-
+  updateRoute(newRoute: RouteInput!): Route
 }

@@ -67,7 +67,8 @@ class CollectionParcelEdit extends React.Component {
                   ParcelOrigin
                   ParcelDestination
                   ParcelSenderName
-                 
+                  ParcelCurrentLocation
+                  ParcelCurrentTime
             }
           }`,
           variables: { collectionParcel: { id: rowId1, ...changes } },
@@ -107,7 +108,8 @@ class CollectionParcelEdit extends React.Component {
            ParcelOrigin,
            ParcelDestination,
            ParcelSenderName,
-           
+           ParcelCurrentLocation,
+           ParcelCurrentTime,
       }
 
       }`;
@@ -166,7 +168,8 @@ class CollectionParcelEdit extends React.Component {
            ParcelOrigin,
            ParcelDestination,
            ParcelSenderName,
-           
+           ParcelCurrentLocation,
+           ParcelCurrentTime,
         
       },
     } = this.state;

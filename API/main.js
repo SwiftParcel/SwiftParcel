@@ -10,9 +10,11 @@ const {
   getDbUser,
   getDbHubDetails,
   getDbCollectionParcelDetails,
+  getDbRoutesDetails,
   getDbCollectionDetails,
   insertHub,
   insertCollectionParcel,
+  insertParcelHistory,
   insertRoute,
   insertCenter,
   insertCollectionRequest,
@@ -27,6 +29,8 @@ const {
   deleteDbHub,
   getDBHubdetailsData,
   getDBCollectionParceldetailsData,
+  getDBdetailsHistoryData,
+  getDBdetailsRouteData,
   updateDbCollection,
   deleteDbCollection,
   getDBCollectiondetailsData,
@@ -39,6 +43,10 @@ const {
   getUserRequestDetails,
   collectionDbRequestUpdate,
   getCollectionRequestDetailsDBForUpdate,
+  updateRouteInDb,
+  getHistoryByTrackingID,
+  parcelHistory,
+  routeDetails,
  } = require('./db.js');
 const { ApolloServer, gql } = require('apollo-server-express');
 const express = require('express');
@@ -86,15 +94,6 @@ async function addContactData(_, { contactData }) {
   return contactData;
 }
 
-/*async function addCollectionParcel(_, { collectionParcel }) {
-  console.log(".............addcollectionParcel....");
-  collectionParcel.id = await getCollectionParcelNextSequence('parcel_details');
-  console.log("..............addcollectionParcel...."+collectionParcel.id);
-  await insertCollectionParcel(collectionParcel);
-  return collectionParcel;
-}*/
-
-
 async function addCollection(_, { collection }) {
   console.log("..............addCollection....");
   collection.id = await getCenterNextSequence('center_details');
@@ -114,10 +113,21 @@ async function addCollectionRequest(_, { collectionRequest }) {
   await insertCollectionRequest(collectionRequest);
   return collectionRequest;
 }
+async function addParcelHistory(_, { parcelHistory }) {
+  console.log("..............collectionRequest....");
+  parcelHistory.id = await getCollectionParcelNextSequence('parcel_details');
+  console.log("..............addCollection...."+parcelHistory.id);
+  await insertParcelHistory(parcelHistory);
+  return parcelHistory;
+}
 
 async function getUser() {
   console.log("getuser");
   return await getDbUser();
+}
+async function getRoutesDetails(){
+  console.log("getRoutesDetails");
+  return await getDbRoutesDetails();
 }
 async function getHubDetails() {
   console.log("getHubDetails");
@@ -162,7 +172,19 @@ async function collectionParcelUpdate(_, { collectionParcel }) {
     throw error;
   }
 }
-
+async function updateRoute(_, { newRoute }) {
+  try {
+    console.log("updateRoute main"+newRoute)
+    const { trackingID, ...changes } = newRoute;
+    // Assuming you have a function in db.js to update the route details
+    const updatedRoute = await updateRouteInDb(trackingID, changes);
+    
+    return updatedRoute;
+  } catch (error) {
+    console.error('Error updating route:', error);
+    throw new Error('Failed to update route');
+  }
+}
 async function collectionUpdate(_, { collection }) {
   console.log('Received colletion:', collection);
   try {
@@ -174,11 +196,15 @@ async function collectionUpdate(_, { collection }) {
     throw error;
   }
 }
+
+
+
 async function hubDelete(_, { hub }) {
   console.log('Received hub:', hub);
   try {
     const { id, ...changes } = hub;
     const updatedhub = await deleteDbHub(id, changes);
+    //getAffectedRoutes(id);
     return updatedhub;
   } catch (error) {
     console.error('Error updating hub:', error);
@@ -204,6 +230,16 @@ async function detailsCollectionParcelData(id) {
   console.log('detailsData...' + id);
   return await getDBCollectionParceldetailsData(id);
 }
+async function detailsHistoryData(id) {
+  console.log('detailsHistoryData...' + id);
+  return await getDBdetailsHistoryData(id);
+}
+async function detailsRouteData(id) {
+  console.log('detailsRouteData...' + id);
+  return await getDBdetailsRouteData(id);
+}
+
+
 async function collectionRequestUpdate(_, { collection }) {
   console.log('Received colletion:', collection);
   try {
@@ -228,8 +264,18 @@ const resolvers = {
   Query: {
     userList: getUser,
     hubList: getHubDetails,
-    routeDetails:  (_, { trackingID }) => getRouteDetailsByTrackingID(trackingID),
+    // routeDetails: async (_, { trackingID }) => {
+    //   try {
+    //     const route = await getRouteDetailsByTrackingID(trackingID);
+    //     console.log('Route from resolver:', route); // Debugging
+    //     return route;
+    //   } catch (error) {
+    //     console.error('Error fetching route details:', error);
+    //     throw new Error('Failed to fetch route details');
+    //   }
+    // },
     collectionParcelList: getCollectionParcelDetails,
+    routes: getRoutesDetails,
     getUserRequestDetails:getUserRequestDetails,
     collectionList: getCollectionDetails,
     detailsList: (_, { id }) => getDBdetailsData(id),
@@ -252,10 +298,25 @@ const resolvers = {
     checkEmailEmp: (_, { Email }) => checkEmailExistsEmp(Email),
     requestdetails: (parent, { loginId }) => requestdetails(loginId),
     getEmployeeDetails: (_, { Id }) => getEmployeeDetails(Id),
+    parcelHistory: (parent, { ParceltrackingID }) => detailsHistoryData(ParceltrackingID),
+    routeDetails: (parent, { trackingID }) => detailsRouteData(trackingID),
     hubdetailsList: (parent, { id }) => detailsData(id),
     collectionParceldetailsList: (parent, { id }) => detailsCollectionParcelData(id),
     collectiondetailsList: (parent, { id }) => detailsCollectionData(id),
     getCollectionRequestDetailsForUpdate: (parent, { id }) => getCollectionRequestDetailsForUpdate(id),
+    // parcelHistory: async (_, { ParceltrackingID }) => {
+    //   try {
+        
+    //     console.log('id from resolver:', ParceltrackingID); // Debugging
+    //     const history = await getHistoryByTrackingID(ParceltrackingID);
+    //     console.log('history from main:', history); 
+    //     return history;
+    //   } catch (error) {
+    //     console.error('Error fetching history details:', error);
+    //     throw new Error('Failed to fetch history details');
+    //   }
+    // },
+ 
   },
 
   Mutation: {
@@ -265,12 +326,14 @@ const resolvers = {
     //addCollectionParcel,
     addCollection,
     addCollectionRequest,
+    addParcelHistory,
     collectionRequestUpdate,
     hubUpdate,
     collectionParcelUpdate,
     collectionUpdate,
     hubDelete,
     collectionDelete,
+    updateRoute,
     addEmployee: async (_, { employee }) => {
       try {
         employee.log_id = await getNextSequence('employee_details');
@@ -292,9 +355,7 @@ const resolvers = {
         await insertCollectionParcel(parcel);
 
         // Insert route into Route table
-
-        route.parcelId = parcel.id;
-
+        //route.parcelId = parcel.id;
         await insertRoute(route);
         console.log("new parcel is: "+parcel);
         console.log("new route is: "+route);
@@ -305,6 +366,7 @@ const resolvers = {
         throw new Error('Failed to add parcel');
       }
     },
+    
     updateUser: async (_, { Id, Cust_name, cust_contact, cust_email }) => {
       const BSON = require('bson');
       const nid = new BSON.ObjectId(Id);
@@ -320,6 +382,7 @@ const resolvers = {
       return updatedUser;
     },
     },
+    
 };
 
 // Handle password reset request
@@ -378,6 +441,8 @@ app.get('/api/directions', async (req, res) => {
     res.status(500).send('Failed to fetch directions');
   }
 });
+
+
 
 // Endpoint for fetching locations (hubs and centers)
 app.get('/api/locations', async (req, res) => {

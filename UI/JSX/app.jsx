@@ -6,12 +6,13 @@ import backgroundImage from '../Images/bg_sign.jpg';
 import { useNavigate,Routes, Route, useLocation} from 'react-router-dom';
 import SignUp from './SignUp.jsx';
 import SignIn from './SignIn.jsx';
+import PriceCalculator from './PriceCalculator.jsx';
 import Navbar from './NavBar.jsx';
 import AboutUs from './AboutUs.jsx'
 import Home from './Home.jsx';
 import EmployeeRegister from './EmployeeRegister.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
-import UserDashbaord from './userDashbaord.jsx';
+import UserDashbaord from './userDashboard.jsx';
 import AdminDashbaord from './AdminDashboard.jsx';
 import HubDashbaord from './HubDashboard.jsx';
 import Hub from './hubList.jsx'
@@ -19,6 +20,7 @@ import Collection from './collectionList.jsx'
 import CollectionDashbaord from './CollectionCenterDashboard.jsx';
 import CollectionParcel from './collectionParcelList.jsx'
 import CollectionParcelEdit from './CollectionParcelEdit.jsx'
+import HubParcelEdit from './HubParcelEdit.jsx';
 import HubEdit from './hubEdit.jsx'
 import HubDelete from './HubDelete.jsx'
 import CollectionEdit from './CollectionEdit.jsx'
@@ -27,6 +29,14 @@ import ContactUs from './ContactUs.jsx';
 import CollectionCenterLayout from './CollectionCenterLayout.jsx'
 import { Link } from "react-router-dom";
 import { AuthProvider } from '../Public/AuthContext';
+import HubParcelList from './HubParcelList.jsx';
+import HubLayout from './HubLayout.jsx';
+import UserPickUpRequestCreation from './UserPickUpRequestCreation.jsx';
+import UserPickUpRequestStatus from './userPickUpRequestStatus.jsx';
+import UserPickUpRequestList from './UserPickUpRequestList.jsx';
+import UserPickUpRequestStatusUpdate from './UserPickUpRequestStatusUpdate.jsx';
+import Tracking from './Tracking.jsx';
+import CollectionParcelReport from './collectionParcelReport.jsx';
 const NotFound = () => <h1>Page Not Found</h1>;
 
 const App = () => {
@@ -96,12 +106,23 @@ const App = () => {
             <Route path='/collectionList' element={<Collection  />} />
             <Route path='/hublist' element={<Hub  />} />
             <Route path='/parcelList' element={<CollectionParcel />} />
+            <Route path='/CollectionParcelReport' element={<CollectionParcelReport />} />
             <Route path='/adminhublist' element={<Hub />} />
         <Route path='/AdminCollectionList' element={<Collection />} />
         <Route path='/collectionparcelList' element={<CollectionCenterLayout><CollectionParcel /></CollectionCenterLayout>} />
+        <Route path='/hubparcelList' element={<HubLayout><HubParcelList /></HubLayout>} />
         <Route path='/adminDash' element={<AdminDashbaord />} />
         <Route path='/collectionDash' element={<CollectionDashbaord />} />
         <Route path='/hubDash' element={<HubDashbaord />} />
+        <Route path='/quote' element={<PriceCalculator/>}/>
+        <Route path='/userCollectionRequest' element={<UserPickUpRequestCreation />} />
+        <Route path='/userPickUpRequestStatus' element={<UserPickUpRequestStatus />} />
+        <Route path='/userRequestmanagement' element={<UserPickUpRequestList />} />
+        <Route path="/tracking/:trackingID" element={<Tracking navigate={navigate} />} />
+        <Route
+          path='/editUserRequest/:id'
+          element={<UserPickUpRequestStatusUpdate navigate={navigate} />}
+        />
         <Route path='/contactUs' element={<ContactUs />} />
         <Route path='/aboutUs' element={<AboutUs/>}/>
         <Route
@@ -127,11 +148,17 @@ const App = () => {
           path='/editCollectionParcel/:id'
           element={<CollectionParcelEdit navigate={navigate} />}
         />
+        <Route
+          path='/editHubParcel/:id'
+          element={<HubParcelEdit navigate={navigate} />}
+        />
             <Route path="*" element={<NotFound />} />
           </Routes>
         )}
       </div>
+      
     </AuthProvider>
+    
   );
 };
 

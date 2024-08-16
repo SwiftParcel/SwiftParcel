@@ -23,8 +23,7 @@ const AdminLayout = ({ children }) => {
           {/* <li><NavLink to="/adminparcelList" activeClassName="active"><FaBox /> Parcel Management</NavLink></li> */}
           <li><NavLink to="/admincollectionList" activeClassName="active"><FaWarehouse /> Collection Center Management</NavLink></li>
           <li><NavLink to="/adminhublist" activeClassName="active"><FaMapMarkedAlt /> Hub Management</NavLink></li>
-          <li><NavLink to="/admin/analytics-reports" activeClassName="active"><FaChartBar /> Analytics & Reports</NavLink></li>
-          <li><NavLink to="/admin/settings" activeClassName="active"><FaCog /> Settings</NavLink></li>
+          <li><NavLink to="/CollectionParcelReport" activeClassName="active"><FaChartBar /> Analytics & Reports</NavLink></li>
           <li><NavLink to="/" > Back To User Site</NavLink></li>
         </ul>
       </div>

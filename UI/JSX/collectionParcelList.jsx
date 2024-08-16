@@ -182,6 +182,9 @@ export default class CollectionParcelList extends React.Component {
               id
               ParcelTrackingId
               ParcelStatus
+              ParcelCurrentLocation
+              ParcelOrigin
+              ParcelCurrentTime
             }
           }
         `,
@@ -190,15 +193,56 @@ export default class CollectionParcelList extends React.Component {
           route: routeData,
         },
       });
-  
       console.log('Parcel added:', response.data.data.addParcel);
+      this.createParcelHistory(response.data.data.addParcel);
       this.loadData();
     } catch (error) {
       console.error('Error adding parcel:', error);
       this.setState({ error: 'Error adding parcel. Please try again.' });
     }
   }
+  async createParcelHistory(ParcelData) {
+    console.log('ParcelData............', ParcelData);
+    var status="Readt To dispatch";
+    var curenttime =new Date();
+     // Prepare parcel data
+     const parcelHistoryData = {
+       ParceltrackingID: ParcelData.ParcelTrackingId,
+       ParcelcurrentLocation: ParcelData.ParcelCurrentLocation,
+       Parcelcurrenttime: ParcelData.ParcelCurrentTime,
+       Parcelstatus: ParcelData.ParcelStatus,
+     };
+     console.log('parcelHistoryData:', parcelHistoryData);
+    
+     const query = `
+      mutation {
+        addParcelHistory(parcelHistory: {
+          ParceltrackingID: "${parcelHistoryData.ParceltrackingID}"
+          ParcelcurrentLocation: "${parcelHistoryData.ParcelcurrentLocation}"
+          Parcelcurrenttime: "${parcelHistoryData.Parcelcurrenttime}"
+          Parcelstatus: "${parcelHistoryData.Parcelstatus}"
+                   }) {
+          id
+          ParceltrackingID
+          ParcelcurrentLocation
+          Parcelcurrenttime
+          Parcelstatus
+         }
+      }
+    `;
 
+   const response = await fetch('http://localhost:8000/graphql', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ query }),
+   });
+   const result = await response.json();
+   if (result.errors) {
+     
+   } else {
+     
+   }
+ }
   calculateBestRoute = async (origin, destination) => {
     try {
       const hubsBetween = await this.findHubsBetween(origin, destination);

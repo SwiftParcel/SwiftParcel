@@ -71,6 +71,21 @@ async function getCollectionRequestDetailsDBForUpdate(id) {
   console.log('in collection....' + collection[0].id);
   return collection;
 }
+async function getHistoryByTrackingID(ParceltrackingID) {
+  try {
+    console.log("trackingID in getHistoryByTrackingID: " + ParceltrackingID);
+
+    const cursor = await db.collection('parcel_history').find({ ParceltrackingID: ParceltrackingID });
+
+    const history = await cursor.toArray();
+
+    console.log("History: ", history);
+    return history;
+  } catch (error) {
+    console.error("Error fetching parcel history: ", error);
+    throw error;
+  }
+}
 async function getUserRequestDetails() {
   const query = { isDeleted: 1,RequestStatus:"In Progress"};
   const user = await db.collection('collection_request_details').find(query).toArray();
@@ -98,6 +113,12 @@ async function getDbCollectionParcelDetails() {
   const collectionParcellist = await db.collection('parcel_details').find().toArray();
   console.log("CollectionParcellist......"+collectionParcellist);
   return collectionParcellist;
+}
+
+async function getDbRoutesDetails() {
+  const routes = await db.collection('route_details').find().toArray();
+  console.log("routes......"+routes);
+  return routes;
 }
 async function getDbCollectionDetails() {
   const query = { isDeleted: 1 };
@@ -155,22 +176,25 @@ async function insertCollectionParcel(collectionParcel) {
   console.log("inside insertCollectionParcel");
   await db.collection('parcel_details').insertOne(collectionParcel);
 }
+async function insertParcelHistory(parcelHistory) {
+  console.log("inside insertParcelHistory");
+  await db.collection('parcel_history').insertOne(parcelHistory);
+}
 
 async function insertRoute(parcelRoute) {
   console.log("inside insertRoute");
   await db.collection('route_details').insertOne(parcelRoute);
 }
 
-
 //tracking
 
 async function getRouteDetailsByTrackingID(trackingID) {
   // Example implementation
   console.log("trackingID in getRouteDetailsByTrackingID: "+trackingID);
-  const routeDetails = await db.collection('route_details').findOne({ trackingID });
-  return routeDetails;
+  const route = await db.collection('route_details').findOne({ trackingID:trackingID });
+  console.log("RouteDetails: "+route);
+  return route;
 }
-
 async function insertCenter(center) {
   await db.collection('center_details').insertOne(center);
 }
@@ -197,6 +221,21 @@ async function getDBCollectionParceldetailsData(id) {
   console.log('in CollectionParcel....' + collectionParcel[0].id);
   return collectionParcel;
 }
+async function getDBdetailsHistoryData(id) {
+  const filter = {};
+  console.log('in getDBdetailsHistoryData' + id); 
+  const parcelHistory = await db.collection('parcel_history').find({ ParceltrackingID:id }).toArray();
+  console.log('in parcelHistory....' + parcelHistory[0].id);
+  return parcelHistory;
+}
+async function getDBdetailsRouteData(id) {
+  
+  console.log('in getDBdetailsRouteData...............' + id); 
+  const routeDetails = await db.collection('route_details').findOne({ trackingID:id });
+  console.log("RouteDetails: "+routeDetails);
+  return routeDetails;
+}
+
 
 async function getDBCollectiondetailsData(id) {
   const filter = {};
@@ -253,6 +292,8 @@ async function getEmployeeDetails(Id) {
   const user = await db.collection('employee_details').findOne({ log_id: nid });
   return user;
 }
+
+
 
 
 async function getUserByEmailAndPassword(email, password) {
@@ -386,7 +427,37 @@ async function deleteDbCollection(id, changes) {
   }
   
 }
+async function updateRouteInDb(id, changes) {
+  console.log('in update updateRouteInDb', id);
+  console.log('in update updateRouteInDb changes', changes);
+  
+ 
+    const route = await db.collection('route_details').findOne({ trackingID:id });
+    console.log('route....', route);
+    Object.assign(route, changes);
+    // validate(issue);
+   
+  await db.collection('route_details').updateOne({  trackingID:id }, { $set: changes });
+  const savedcollectionparcel = await db.collection('route_details').findOne({  trackingID:id });
+  return savedcollectionparcel;
+}
 
+// //Route update
+// async function updateRouteInDb(trackingID, Newroute) {
+//   try {
+//     const result = await db.collection('route_details').updateOne(
+//       { trackingID },
+//       { $set: { Newroute } }
+//     );
+//     if (result.modifiedCount === 0) {
+//       throw new Error('No route updated');
+//     }
+//     return { trackingID, route };
+//   } catch (error) {
+//     console.error('Error updating route in database:', error);
+//     throw error;
+//   }
+// }
 //Employee
 async function insertDbEmployee(employee) {
   try {
@@ -441,11 +512,13 @@ module.exports = {
   insertHub,
   insertContactData,
   insertCollectionParcel,
+  insertParcelHistory,
   insertCenter,
   insertCollectionRequest,
   getDbUser,
   getDbHubDetails,
   getDbCollectionParcelDetails,
+  getDbRoutesDetails,
   getDbCollectionDetails,
   dbConnect,
   getDBdetailsData,
@@ -465,10 +538,14 @@ module.exports = {
   deleteDbCollection,
   getDBHubdetailsData,
   getDBCollectionParceldetailsData,
+  getDBdetailsHistoryData,
+  getDBdetailsRouteData,
   getDBCollectiondetailsData,
   insertRoute,
   getUserRequestDetails,
   collectionDbRequestUpdate,
   getCollectionRequestDetailsDBForUpdate,
   getRouteDetailsByTrackingID,
+  updateRouteInDb,
+  getHistoryByTrackingID,
 };

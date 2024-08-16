@@ -31,6 +31,7 @@ export default class HubParcelList extends React.Component {
           ParcelSenderName,
           ParcelTrackingId,
           ParcelCurrentLocation,
+          ParcelCurrentTime,
         }
       }`;
     const response = await fetch('http://localhost:8000/graphql', {
